@@ -7,7 +7,8 @@ export default function PreviewResume({
   picture,
   intro,
   jobtitle,
-  workExperiences,
+  workExperiences = [],
+  links = []
 }) {
   console.log(workExperiences);
   return (
@@ -26,11 +27,12 @@ export default function PreviewResume({
             <p className="mb-2 font-light">{age} years old</p>
             <p className="mb-2 font-medium">{jobtitle}</p>
             <p className="text-sm bg-blend-difference">{intro}</p>
-            <div className="my-4 flex gap-4">
-              <a href="" className="text-white py-1 px-2 border border-white hover:bg-black hover:text-white hover:border-black transition-colors duration-300">Google</a>
-              <a href="" className="text-white py-1 px-2 border border-white hover:bg-black hover:text-white hover:border-black transition-colors duration-300">Linkedin</a>
-              <a href="" className="text-white py-1 px-2 border border-white hover:bg-black hover:text-white hover:border-black transition-colors duration-300">Youtube</a>
-              <a href="" className="text-white py-1 px-2 border border-white hover:bg-black hover:text-white hover:border-black transition-colors duration-300">Facebook</a>
+            <div className="my-4 flex gap-2">
+              {links.map(({ label, url }) =>
+                <a href={url} className="text-white py-1 px-2 border border-white hover:bg-black hover:text-white hover:border-black transition-colors duration-300">
+                  {label}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -78,4 +80,8 @@ PreviewResume.propTypes = {
     jobTitle: PropTypes.string.isRequired,
     jobDescription: PropTypes.string.isRequired
   })),
+  links: PropTypes.arrayOf(PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired
+  }))
 };

@@ -34,12 +34,14 @@ export default function Home() {
 
   register('picture');
   register('workExperiences', { value: [] });
+  register('links', { value: [] });
 
   const name = watch('name');
   const jobTitle = watch('jobTitle');
   const age = watch('age');
   const intro = watch('intro');
   const picture = watch('picture');
+  const links = watch('links');
   const workExperiences = watch('workExperiences');
 
   const auth = false;
@@ -83,6 +85,14 @@ export default function Home() {
   const handleWorkExperienceSubmit = (data) => {
     const weLength = workExperiences.length;
     setValue(`workExperiences.${weLength}`, data);
+  };
+
+  const handleLinkAdd = () => {
+    const newLength = links.length;
+    if (!links[newLength - 1].label || !links[newLength - 1].url) return;
+
+    setValue(`links.${newLength}.label`, '');
+    setValue(`links.${newLength}.url`, '');
   };
 
   const onSubmit = (data) => {
@@ -132,41 +142,74 @@ export default function Home() {
                       }
                     </div>
                     <div>
-                      <button className="px-2 py-1 bg-black text-white rounded-md" onClick={handlePictureclick}>Select your picture</button>
+                      <button className="px-2 py-1 bg-black text-white rounded-md" onClick={handlePictureclick}>
+                        <HiCamera className="inline mr-2" />
+                        Select your picture
+                      </button>
                       {errors.picture?.type === 'required' && <small class="text-red-500 block">{errors.picture.message}</small>}
                     </div>
                   </div>
-                  <p className="font-bold mb-2">Personal Information</p>
-                  <div className="mb-2">
-                    <label htmlFor="" className="text-gray-500">Fullname</label>
-                    <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name} />
-                    {errors.name?.type === 'required' && <small class="text-red-500">{errors.name.message}</small>}
-                  </div>
-                  <div className="mb-2">
-                    <label htmlFor="" className="text-gray-500">Job Title (optional)</label>
-                    <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="Frontend Developer" />
-                  </div>
-                  <div className="mb-2">
-                    <label htmlFor="" className="text-gray-500">
-                      Age
-                    </label>
-                    <Input register={register} name="age" type="number" isError={errors.age} />
-                    {errors.age?.type === 'required' && <small class="text-red-500">{errors.age.message}</small>}
-                  </div>
-                  <div className="mb-2">
-                    <label htmlFor="" className="text-gray-500">
-                      Intro
-                    </label>
-                    <TextareaAutosize {...register('intro')} minRows={2} className="w-full bg-gray-100 rounded-md px-2 py-2 resize-none" placeholder="I like to code " />
-                  </div>
-                  <div className="mb-4" />
-                  <div className="flex justify-between mb-2">
-                    <p className="font-bold mb-2">Work experience</p>
-                    <button className="hover:bg-gray-200 p-2 rounded-full" onClick={() => modalWorkExperienceToggle()}>
-                      <HiPlus size="1rem" />
-                    </button>
-                  </div>
+
+                  {/* Personal information */}
                   <div className="mb-4">
+                    <p className="font-bold mb-2">Personal Information</p>
+                    <div className="mb-2">
+                      <label htmlFor="" className="text-gray-500">Fullname</label>
+                      <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name} />
+                      {errors.name?.type === 'required' && <small class="text-red-500">{errors.name.message}</small>}
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="" className="text-gray-500">Job Title (optional)</label>
+                      <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="Frontend Developer" />
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="" className="text-gray-500">
+                        Age
+                      </label>
+                      <Input register={register} name="age" type="number" isError={errors.age} />
+                      {errors.age?.type === 'required' && <small class="text-red-500">{errors.age.message}</small>}
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="" className="text-gray-500">
+                        Intro
+                      </label>
+                      <TextareaAutosize {...register('intro')} minRows={2} className="w-full bg-gray-100 rounded-md px-2 py-2 resize-none" placeholder="I like to code " />
+                    </div>
+                  </div>
+
+                  {/* Links */}
+                  <div className="mb-4">
+                    <div className="flex justify-between">
+                      <p className="font-bold mb-2">Links</p>
+                      <button className="hover:bg-gray-200 p-2 rounded-full" onClick={handleLinkAdd}>
+                        <HiPlus size="1rem" />
+                      </button>
+                    </div>
+                    {links.length === 0 && (
+                      <div className="text-center text-gray-500">
+                        No links
+                      </div>
+                    )}
+                    {links?.map((link, i) =>
+                      <div className="flex justify-between gap-2 mb-2">
+                        <div className="basis-1/3">
+                          <Input register={register} name={`links.${i}.label`} placeholder="Label" />
+                        </div>
+                        <div className="basis-2/3">
+                          <Input register={register} name={`links.${i}.url`} placeholder="URL" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Work experiences */}
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-2">
+                      <p className="font-bold mb-2">Work experience</p>
+                      <button className="hover:bg-gray-200 p-2 rounded-full" onClick={modalWorkExperienceToggle}>
+                        <HiPlus size="1rem" />
+                      </button>
+                    </div>
                     {workExperiences?.length === 0 && (
                       <div className="text-center text-gray-500">
                         No work experiences
@@ -208,6 +251,7 @@ export default function Home() {
                   intro={intro}
                   jobtitle={jobTitle}
                   workExperiences={workExperiences}
+                  links={links}
                 />
               </BrowserFrame >
             </div>
