@@ -10,7 +10,6 @@ export default function PreviewResume({
   workExperiences = [],
   links = []
 }) {
-  console.log(workExperiences);
   return (
     <>
       <section className="container px-12 py-8 border-b bg-yellow-400">
@@ -29,6 +28,7 @@ export default function PreviewResume({
             <p className="text-sm bg-blend-difference">{intro}</p>
             <div className="my-4 flex gap-2">
               {links.map(({ label, url }) =>
+                label &&
                 <a href={url} className="text-white py-1 px-2 border border-white hover:bg-black hover:text-white hover:border-black transition-colors duration-300">
                   {label}
                 </a>
@@ -69,7 +69,7 @@ export default function PreviewResume({
 PreviewResume.propTypes = {
   name: PropTypes.string,
   picture: PropTypes.string,
-  age: PropTypes.number,
+  age: PropTypes.string,
   intro: PropTypes.string,
   jobtitle: PropTypes.string,
   workExperiences: PropTypes.arrayOf(PropTypes.shape({
