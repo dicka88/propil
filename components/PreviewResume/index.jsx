@@ -24,7 +24,7 @@ export default function PreviewResume({
           </div>
           <div>
             <h1 className="text-4xl">{name}</h1>
-            <p className="mb-2 font-light">{age} years old</p>
+            <p className="mb-2 font-light">{age ? `${age} years old` : ''}</p>
             <p className="mb-2 font-medium">{jobtitle}</p>
             <p className="text-sm bg-blend-difference">{intro}</p>
             <div className="my-4 flex gap-2">
