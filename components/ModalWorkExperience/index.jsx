@@ -81,7 +81,7 @@ export default function ModalWorkExperience({
                   }
                 </div>
                 <span className="font-bold block">Company Logo</span>
-                {errors.companyLogo?.type === 'required' && <small class="text-red-500">{errors.companyLogo.message}</small>}
+                {errors.companyLogo?.type === 'required' && <small className="text-red-500">{errors.companyLogo.message}</small>}
 
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function ModalWorkExperience({
             className={classNames("w-full bg-gray-100 rounded-md px-2 py-2", { "border border-red-500": errors.company })}
             placeholder="Google Indonesia"
           />
-          {errors.company?.type === 'required' && <small class="text-red-500">{errors.company.message}</small>}
+          {errors.company?.type === 'required' && <small className="text-red-500">{errors.company.message}</small>}
         </div>
 
         <div className="flex gap-4 mb-4">
@@ -105,7 +105,7 @@ export default function ModalWorkExperience({
               className={classNames("w-full bg-gray-100 rounded-md px-2 py-2", { "border border-red-500": errors.startDate })}
               placeholder="Mar 2021"
             />
-            {errors.startDate?.type === 'required' && <small class="text-red-500">{errors.startDate.message}</small>}
+            {errors.startDate?.type === 'required' && <small className="text-red-500">{errors.startDate.message}</small>}
           </div>
           <div className="w-full">
             <label className="font-bold mb-2">End Date</label>
@@ -115,7 +115,7 @@ export default function ModalWorkExperience({
               className={classNames("w-full bg-gray-100 rounded-md px-2 py-2", { "border border-red-500": errors.endDate })}
               placeholder=""
             />
-            {errors.endDate?.type === 'required' && <small class="text-red-500">{errors.endDate.message}</small>}
+            {errors.endDate?.type === 'required' && <small className="text-red-500">{errors.endDate.message}</small>}
             <div>
               <input type="checkbox" className="mr-2" />
               <small>
@@ -133,7 +133,7 @@ export default function ModalWorkExperience({
             className={classNames("w-full bg-gray-100 rounded-md px-2 py-2", { "border border-red-500": errors.jobTitle })}
             placeholder="e.g, Fullstack Javascript"
           />
-          {errors.jobTitle?.type === 'required' && <small class="text-red-500">{errors.jobTitle.message}</small>}
+          {errors.jobTitle?.type === 'required' && <small className="text-red-500">{errors.jobTitle.message}</small>}
         </div>
 
         <div className="mb-4">
@@ -146,7 +146,7 @@ export default function ModalWorkExperience({
               "border border-red-500": errors.jobDescription
             })}
           />
-          {errors.jobDescription?.type === 'required' && <small class="text-red-500">{errors.jobDescription.message}</small>}
+          {errors.jobDescription?.type === 'required' && <small className="text-red-500">{errors.jobDescription.message}</small>}
         </div>
 
         <div className="flex gap-2 justify-end">
