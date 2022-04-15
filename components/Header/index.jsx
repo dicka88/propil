@@ -1,11 +1,12 @@
 import React from 'react';
-import { HiDocumentText, HiX } from 'react-icons/hi';
-import { FcGoogle } from 'react-icons/fc';
+import { HiChevronDown, HiDocumentText } from 'react-icons/hi';
 
-import Modal from '../Modal';
 import useModal from '../../hooks/useModal';
+import useAuth from '../../zustand/auth';
+import ModalAuth from '../ModalAuth';
 
 export default function Header() {
+  const { isLoggedIn, user } = useAuth();
   const { open, toggle } = useModal();
 
   return (
@@ -18,39 +19,30 @@ export default function Header() {
               Propil
             </h1>
           </div>
-          <div className="flex gap-2">
-            <button className="py-2 px-4 rounded-lg bg-green-500 text-white" onClick={toggle}>Login</button>
-            <button className="py-2 px-4 rounded-lg bg-gray-100" onClick={toggle}>Register</button>
+          <div className="flex gap-2 items-center">
+            {isLoggedIn ? (
+              <>
+                <span>
+                  {user.name}
+                </span>
+                <div className="aspect-square rounded-full bg-gray-100 h-[50px] min-h-[50px] overflow-hidden">
+                  <img src={user.picture} alt={user.name} />
+                </div>
+                <button>
+                  <HiChevronDown />
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="py-2 px-4 rounded-lg bg-green-500 text-white" onClick={toggle}>Login</button>
+                <button className="py-2 px-4 rounded-lg bg-gray-100" onClick={toggle}>Register</button>
+              </>
+            )}
           </div>
         </nav>
       </header>
 
-      <Modal open={open} toggle={toggle}>
-        <div className="space-y-6">
-
-          <div className="flex justify-between">
-            <h1 className="font-bold">Signin</h1>
-            <button className='p-2 hover:bg-gray-100 rounded-full' onClick={toggle}>
-              <HiX />
-            </button>
-          </div>
-
-          <p>There not yet another option to sign, just with Google account you here</p>
-
-          <button className="w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-300">
-            <FcGoogle className='inline mr-4' size="1.5rem" />
-            Continue Sign In with Google
-          </button>
-
-          <p className="text-gray-500">
-            If you didn't yet have account, you can
-            {" "}
-            <span className="cursor-pointer text-blue-700 hover:underline">register</span>
-          </p>
-        </div>
-
-      </Modal>
+      <ModalAuth open={open} toggle={toggle} />
     </>
-
   );
 }
