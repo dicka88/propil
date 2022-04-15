@@ -185,7 +185,7 @@ export default function Home() {
                         <HiPlus size="1rem" />
                       </button>
                     </div>
-                    {links.length === 0 && (
+                    {links?.length === 0 && (
                       <div className="text-center text-gray-500">
                         No links
                       </div>
