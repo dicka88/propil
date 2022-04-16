@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import useYupValidationResolver from '../../hooks/useYupValidationResolver';
 import Modal from '../Modal';
-import { HiCamera } from 'react-icons/hi';
+import { HiCamera, HiTrash } from 'react-icons/hi';
 
 const validationSchema = yup.object({
   company: yup.string().required('Field is required'),
@@ -28,7 +28,7 @@ const initialFormValue = {
 };
 
 export default function ModalWorkExperience({
-  open, toggle, data = {}, onSubmit
+  open, toggle, data, onSubmit, onRemove
 }) {
   const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm({
     resolver: useYupValidationResolver(validationSchema)
@@ -53,10 +53,14 @@ export default function ModalWorkExperience({
     reader.readAsDataURL(file);
   };
 
+  const handleOnRemove = () => {
+    onRemove();
+    customToggle();
+  };
+
   const customSubmit = (data) => {
     onSubmit(data);
-    toggle();
-    reset(initialFormValue);
+    customToggle();
   };
 
   const customToggle = () => {
@@ -64,8 +68,19 @@ export default function ModalWorkExperience({
     toggle();
   };
 
+  useEffect(() => {
+    if (data) {
+      Object.entries(data).forEach((obj) => {
+        const [key, value] = obj;
+        setValue(key, value);
+      });
+    } else {
+      reset();
+    }
+  }, [open]);
+
   return (
-    <Modal open={open} toggle={customToggle} title="Add Work Experience">
+    <Modal open={open} toggle={customToggle} title={data ? "Update Work Experience" : "Add Work Experience"}>
       <form onSubmit={handleSubmit(customSubmit)}>
         <div className="mb-4">
           <div className="flex justify-center">
@@ -110,7 +125,7 @@ export default function ModalWorkExperience({
           <div className="w-full">
             <label className="font-bold mb-2">End Date</label>
             <input
-              {...register('startDate')}
+              {...register('endDate')}
               type="text"
               className={classNames("w-full bg-gray-100 rounded-md px-2 py-2", { "border border-red-500": errors.endDate })}
               placeholder=""
@@ -149,7 +164,10 @@ export default function ModalWorkExperience({
           {errors.jobDescription?.type === 'required' && <small className="text-red-500">{errors.jobDescription.message}</small>}
         </div>
 
-        <div className="flex gap-2 justify-end">
+        <div className="flex gap-2 justify-between">
+          <button type="button" className="py-2 px-6 border hover:border-red-500 text-red-500 rounded-md" onClick={handleOnRemove}>
+            Remove
+          </button>
           <button type="submit" className="py-2 px-6 bg-black text-white rounded-md" >
             Save
           </button>
@@ -164,5 +182,6 @@ ModalWorkExperience.propTypes = {
   open: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
   data: PropTypes.object,
-  onSubmit: PropTypes.func.isRequired
+  onSubmit: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired
 };
