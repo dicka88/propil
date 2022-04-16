@@ -13,15 +13,16 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BrowserFrame from '../components/BrowserFrame';
 import Modal from '../components/Modal';
-import useModal from '../hooks/useModal';
-
 import ModalWorkExperience from '../components/ModalWorkExperience';
 import Input from '../components/Input';
 import useYupValidationResolver from '../hooks/useYupValidationResolver';
 import PreviewResume from '../components/PreviewResume';
-import useAuth from '../zustand/auth';
-import { getResume, updateResume } from '../services/resume.service';
 import ModalPublishResume from '../components/ModalPublishResume';
+
+import useModal from '../hooks/useModal';
+import useAuth from '../zustand/auth';
+
+import { getResume, updateResume } from '../services/resume.service';
 
 const validatorSchema = yup.object({
   picture: yup.string().required("Picture is required"),
@@ -30,6 +31,16 @@ const validatorSchema = yup.object({
   age: yup.number().min(10, "You are too younger, min age is 10").max(120).required("Age is required").nullable(),
   intro: yup.string().notRequired()
 });
+
+const initialForm = {
+  picture: null,
+  name: "",
+  jobTitle: "",
+  age: null,
+  intro: null,
+  links: [],
+  workExperinces: []
+};
 
 export default function Home() {
   const { isLoggedIn, user } = useAuth();
@@ -45,7 +56,7 @@ export default function Home() {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [submitMessage, setSubmitMessage] = useState("");
 
-  const { register, unregister, control, handleSubmit, watch, getValues, setValue, formState: { errors, isDirty }, } = useForm({
+  const { register, unregister, control, handleSubmit, watch, getValues, setValue, reset, formState: { errors, isDirty }, } = useForm({
     resolver: useYupValidationResolver(validatorSchema)
   });
   const { fields: linkFields, append: linkFieldAppend, remove: linkFieldRemove } = useFieldArray({
@@ -142,6 +153,8 @@ export default function Home() {
       setIsSaveLoading(true);
       await updateResume(resume.id, data);
       setSubmitMessage("Successful saved");
+      // clear dirty
+      reset(data);
     } catch (e) {
       console.error(e);
     } finally {
@@ -150,28 +163,31 @@ export default function Home() {
   };
 
   const fetchResume = useCallback(async () => {
-    if (isLoggedIn) {
-      setIsPageLoading(true);
+    setIsPageLoading(true);
 
-      // fetch resumes  
-      const data = await getResume(user.user_id);
+    // fetch resumes  
+    const data = await getResume(user.user_id);
 
-      if (!data) return;
-      // set to react hook form value
-      Object.entries(data).forEach((obj) => {
-        const [key, value] = obj;
-        setValue(key, value);
-      });
+    if (!data) return;
+    // set to react hook form value
+    Object.entries(data).forEach((obj) => {
+      const [key, value] = obj;
+      setValue(key, value);
+    });
 
-      setResume(data);
-    }
+    setResume(data);
 
     setIsPageLoading(false);
   });
 
   // will triggerred on isLoggedIn changed
   useEffect(() => {
-    fetchResume();
+    console.log({ isLoggedIn });
+    if (isLoggedIn) {
+      fetchResume();
+    } else {
+      reset(initialForm);
+    }
   }, [isLoggedIn]);
 
   return (
