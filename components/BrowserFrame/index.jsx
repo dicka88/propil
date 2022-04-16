@@ -1,5 +1,5 @@
 import React from 'react';
-import { HiLockClosed } from 'react-icons/hi';
+import { HiLockClosed, HiOutlineExternalLink } from 'react-icons/hi';
 import propTypes from 'prop-types';
 
 export default function BrowserFrame({ url, children }) {
@@ -7,14 +7,19 @@ export default function BrowserFrame({ url, children }) {
     <div className="rounded-md overflow-hidden shadow sticky top-4">
       <header className="bg-gray-200 flex items-center px-4 py-2">
         <div className="flex mr-6">
-          <span className="rounded-full aspect-square h-[15px] bg-red-500 mx-1" />
-          <span className="rounded-full aspect-square h-[15px] bg-yellow-500 mx-1" />
-          <span className="rounded-full aspect-square h-[15px] bg-green-500 mx-1" />
+          <span className="rounded-full aspect-square h-[15px] bg-red-500 mx-1 hover:bg-red-600 transition-colors duration-100" />
+          <span className="rounded-full aspect-square h-[15px] bg-yellow-500 mx-1 hover:bg-yellow-600 transition-colors duration-100" />
+          <span className="rounded-full aspect-square h-[15px] bg-green-500 mx-1 hover:bg-green-600 transition-colors duration-100" />
         </div>
         <div>
-          <div className="py-1 px-4 text-gray-500 bg-gray-300 rounded-md min-w-[400px]">
-            <HiLockClosed className="inline mr-4" size={14} />
-            {url}
+          <div className="flex items-center justify-between py-1 px-4 text-gray-500 bg-gray-300 rounded-md min-w-[400px]">
+            <div>
+              <HiLockClosed className="inline mr-4" size={14} />
+              {url}
+            </div>
+            <a href={`https://${url}`} target="_blank">
+              <HiOutlineExternalLink />
+            </a>
           </div>
         </div>
         <span />
