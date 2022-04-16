@@ -20,10 +20,6 @@ const useAuth = create(
     login: (user) => set(state => ({ ...state, user: user, isLoggedIn: true })),
     logout: () => set(state => ({ ...state, user: initialUser, isLoggedIn: false })),
   })
-  , {
-    name: "propil:auth",
-    storage: typeof window !== 'undefined' ? window.localStorage : dummyStorageApi,
-  }
 );
 
 export default useAuth;
