@@ -165,27 +165,31 @@ export default function Home() {
   const fetchResume = useCallback(async () => {
     setIsPageLoading(true);
 
-    // fetch resumes  
-    const data = await getResume(user.user_id);
+    try {
+      // fetch resumes  
+      const data = await getResume(user.user_id);
 
-    if (!data) return;
-    // set to react hook form value
-    Object.entries(data).forEach((obj) => {
-      const [key, value] = obj;
-      setValue(key, value);
-    });
+      if (!data) return;
+      // set to react hook form value
+      Object.entries(data).forEach((obj) => {
+        const [key, value] = obj;
+        setValue(key, value);
+      });
 
-    setResume(data);
+      setResume(data);
 
-    setIsPageLoading(false);
+      setIsPageLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   // will triggerred on isLoggedIn changed
   useEffect(() => {
-    console.log({ isLoggedIn });
     if (isLoggedIn) {
       fetchResume();
     } else {
+      setIsPageLoading(false);
       reset(initialForm);
     }
   }, [isLoggedIn]);
@@ -201,7 +205,7 @@ export default function Home() {
       {isPageLoading && (
         <div className="container py-4">
           <div className="flex justify-center items-center py-36">
-            <ReactLoading type="bubbles" color="#000" />
+            <ReactLoading type="bubbles" color="#22c55e" />
           </div>
         </div>
       )}
@@ -210,6 +214,9 @@ export default function Home() {
         <div className="container py-4">
           <main>
             <div className="flex justify-end items-center mb-4">
+              <button className="bg-black text-white py-2 px-4 rounded-md shadow disabled:opacity-60" disabled={isSaveLoading}>
+                Customize link
+              </button>
               {submitMessage && (
                 <span className="mr-4">
                   {submitMessage}
@@ -279,7 +286,7 @@ export default function Home() {
                         <label htmlFor="" className="text-gray-500">
                           Age
                         </label>
-                        <Input register={register} name="age" type="number" isError={errors.age} />
+                        <Input register={register} name="age" type="number" min="10" max="150" placeholder="Min 10" isError={errors.age} />
                         {errors.age?.type === 'required' && <small className="text-red-500">{errors.age.message}</small>}
                         {errors.age?.type === 'max' && <small className="text-red-500">{errors.age.message}</small>}
                         {errors.age?.type === 'min' && <small className="text-red-500">{errors.age.message}</small>}
