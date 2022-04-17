@@ -1,14 +1,15 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 import { HiDocumentText, HiLogout, HiUser } from 'react-icons/hi';
 import Cookies from 'universal-cookie';
 
-import useModal from '../../hooks/useModal';
 import useAuth from '../../zustand/auth';
 import useModalState from '../../zustand/modal';
 import ModalAuth from '../ModalAuth';
 
 export default function Header() {
+  const router = useRouter();
   const { isLoggedIn, user, logout } = useAuth();
   const { setModalAuthMode, toggleModalAuth } = useModalState();
 
@@ -26,6 +27,7 @@ export default function Header() {
     logout();
     const cookies = new Cookies();
     cookies.remove('token');
+    router.push('/');
   };
 
   return (
@@ -48,11 +50,11 @@ export default function Header() {
                 <span>
                   {user.name}
                 </span>
-                <div className="relative">
+                <div className="group relative">
                   <div className="aspect-square rounded-full bg-gray-100 h-[50px] min-h-[50px] overflow-hidden cursor-pointer">
                     <img src={user.picture} />
                   </div>
-                  <div className="absolute top-full right-0 py-4 z-10">
+                  <div className="absolute invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 top-full right-0 py-4 z-10">
                     <div className="bg-white rounded-md shadow py-4 min-w-[160px]">
                       <button className="py-1 text-gray-500 hover:bg-gray-100 text-left px-4 w-full opacity-60">
                         <HiUser className='inline mr-4' />
