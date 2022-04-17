@@ -47,7 +47,6 @@ export default function Signup({ setMode, toggle }) {
       toggle();
     } catch (err) {
       console.log(err);
-      alert("Something error happen");
     }
   };
 

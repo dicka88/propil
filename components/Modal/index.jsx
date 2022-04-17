@@ -10,7 +10,7 @@ export default function Modal({ open, toggle, children, title, withClose = true 
         "hidden": !open
       }
     )}>
-      <div className="relative p-4 w-full max-w-2xl h-full md:h-auto mx-auto my-auto">
+      <div className="relative p-4 w-full max-w-2xl h-screen md:h-auto mx-auto my-auto">
         <div className="relative bg-white rounded-lg">
           {title && (
             <div className="flex justify-between items-start p-5 rounded-t border-b">
