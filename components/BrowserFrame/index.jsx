@@ -17,7 +17,7 @@ export default function BrowserFrame({ url, children }) {
               <HiLockClosed className="inline mr-4" size={14} />
               {url}
             </div>
-            <a href={`https://${url}`} target="_blank">
+            <a href={`${url}`} target="_blank">
               <HiOutlineExternalLink />
             </a>
           </div>
