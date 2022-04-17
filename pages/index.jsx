@@ -18,6 +18,7 @@ import useYupValidationResolver from '../hooks/useYupValidationResolver';
 import PreviewResume from '../components/PreviewResume';
 import ModalPublishResume from '../components/ModalPublishResume';
 import ModalPicturePicker from '../components/ModalPicturePicker';
+import ModalCustomizeLink from '../components/ModalCustomizeLink';
 
 import useModal from '../hooks/useModal';
 import useAuth from '../zustand/auth';
@@ -66,7 +67,7 @@ export default function Home() {
     getValues,
     setValue,
     reset,
-    formState: { errors, isDirty }
+    formState: { errors }
   } = useForm({
     resolver: useYupValidationResolver(validatorSchema)
   });
@@ -102,6 +103,7 @@ export default function Home() {
   const { open: modalPictureOpen, toggle: modalPictureToggle } = useModal();
   const { open: modalwWorkExprienceOpen, toggle: modalWorkExperienceToggle } = useModal();
   const { open: modalPublishOpen, toggle: modalPublishToggle } = useModal();
+  const { open: modalCustomizeLinkOpen, toggle: modalCustomizeLinkToggle } = useModal();
 
   const handlePictureclick = () => {
     if (picture) {
@@ -220,7 +222,11 @@ export default function Home() {
           <main>
             <div className="flex gap-2 justify-end items-center mb-4">
               {isLoggedIn && resume.username && (
-                <button className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60" disabled={isSaveLoading}>
+                <button
+                  className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
+                  disabled={isSaveLoading}
+                  onClick={modalCustomizeLinkToggle}
+                >
                   <FaMagic className="inline mr-4" />
                   Customize link
                 </button>
@@ -432,6 +438,23 @@ export default function Home() {
             toggle={modalPublishToggle}
             getValues={getValues}
           />
+
+          {/* Modal Customize Link */}
+          {isLoggedIn && modalCustomizeLinkOpen && (
+            <ModalCustomizeLink
+              open={modalCustomizeLinkOpen}
+              toggle={modalCustomizeLinkToggle}
+              resumeId={resume.id}
+              username={resume.username}
+              isPublic={resume.isPublic}
+              afterSubmit={(data) => {
+                setResume({
+                  ...resume,
+                  ...data
+                });
+              }}
+            />
+          )}
 
           <Footer />
         </div>
