@@ -1,24 +1,33 @@
 import React from 'react';
 import Head from 'next/head';
+import Cookie from 'universal-cookie';
+import jwtDecode from 'jwt-decode';
 
 import { getResumeByUsername } from '../../services/resume.service';
 import PreviewResume from '../../components/PreviewResume';
 
-function Username({ data }) {
+function Username({ resume, user }) {
   return (
     <div className="mx-auto">
       <Head>
-        <title>{data.name}</title>
-        <link rel="icon" type="image/png" href={data.picture} />
+        <title>{resume.name}</title>
+        <link rel="icon" type="image/png" href={resume.picture} />
       </Head>
+      {!resume.isPublic && resume.user_id === user.user_id && (
+        <div className="bg-black text-white p-4 text-center">
+          <p className="font-bold">
+            Only you can see this page
+          </p>
+        </div>
+      )}
       <PreviewResume
-        name={data.name}
-        age={data.age}
-        picture={data.picture}
-        intro={data.intro}
-        jobtitle={data.jobTitle}
-        workExperiences={data.workExperiences}
-        links={data.links}
+        name={resume.name}
+        age={resume.age}
+        picture={resume.picture}
+        intro={resume.intro}
+        jobtitle={resume.jobTitle}
+        workExperiences={resume.workExperiences}
+        links={resume.links}
       />
     </div>
   );
@@ -26,6 +35,21 @@ function Username({ data }) {
 
 export async function getServerSideProps(context) {
   const { username } = context.query;
+  const { cookie } = context.req.headers;
+
+  const univeralCookie = new Cookie(cookie);
+  const token = univeralCookie.get('token');
+
+  let user = null;
+  if (token) {
+    try {
+      user = jwtDecode(token);
+    } catch (err) {
+      console.eror(err);
+    }
+  }
+
+
   const resume = await getResumeByUsername(username);
 
   if (!resume) {
@@ -34,18 +58,17 @@ export async function getServerSideProps(context) {
     };
   }
 
-  // if profile is public then show the page
-
-  // if profile is private and is auth session == username then show the page with banner (only you can show this page)
-
-  // if profile is private then show 404
-  // return {
-  //   notFound: true
-  // };
+  // if resume is private and is not their own then return 404
+  if (!resume.isPublic && resume.user_id !== user?.user_id) {
+    return {
+      notFound: true
+    };
+  }
 
   return {
     props: {
-      data: resume
+      user,
+      resume
     }
   };
 }
