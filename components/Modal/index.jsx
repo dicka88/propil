@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 export default function Modal({ open, toggle, children, title, withClose = true }) {
+  const modalRef = useRef();
+  const handleOverlayClick = (e) => {
+    e.stopPropagation();
+
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      toggle();
+    }
+  };
+
   return (
     <div aria-hidden="true" className={classNames(
-      "overflow-y-auto overflow-x-hidden fixed top-0 bg-black bg-opacity-50 right-0 left-0 z-50 w-full md:inset-0 h-modal h-full",
+      "overflow-y-auto transition-all opacity-0 duration-100 invisible select-none overflow-x-hidden fixed top-0 bg-black bg-opacity-50 right-0 left-0 z-50 w-full md:inset-0  h-full",
       {
-        "hidden": !open
+        "!visible opacity-100": open
       }
-    )}>
-      <div className="relative p-4 w-full max-w-2xl h-screen md:h-auto mx-auto my-auto">
-        <div className="relative bg-white rounded-lg">
+    )}
+      onClick={handleOverlayClick}
+    >
+      <div className="p-4 w-full max-w-2xl h-screen md:h-auto mx-auto my-auto">
+        <div ref={modalRef} className="relative bg-white rounded-lg overflow-hidden">
           {title && (
             <div className="flex justify-between items-start p-5 rounded-t border-b">
               <h3 className="text-xl font-semibold text-gray-900 lg:text-2xl">
