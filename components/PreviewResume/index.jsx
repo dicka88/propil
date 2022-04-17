@@ -71,7 +71,7 @@ export default function PreviewResume({
 PreviewResume.propTypes = {
   name: PropTypes.string,
   picture: PropTypes.string,
-  age: PropTypes.number,
+  age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   intro: PropTypes.string,
   jobtitle: PropTypes.string,
   workExperiences: PropTypes.arrayOf(PropTypes.shape({
