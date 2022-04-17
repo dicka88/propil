@@ -13,7 +13,7 @@ const validationSchema = yup.object({
   username: yup.string().min(3).max(20).required('Customize link is required')
 });
 
-export default function ModalPublishResume({ open, toggle, getValues }) {
+export default function ModalPublishResume({ open, toggle, getValues, afterSubmit }) {
   const { user } = useAuth();
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: useYupValidationResolver(validationSchema)
@@ -29,8 +29,8 @@ export default function ModalPublishResume({ open, toggle, getValues }) {
     setIsUsernameExist(false);
     // check username
     const usernameExists = await getResumeUsername(data.username);
-    // if exist set non safe  
 
+    // if exist set non safe  
     if (usernameExists) {
       setIsUsernameExist(true);
       return;
@@ -43,10 +43,11 @@ export default function ModalPublishResume({ open, toggle, getValues }) {
     };
 
     try {
-      const create = await createResume(newData);
+      await createResume(newData);
+      const resume = await getResumeUsername(data.username);
 
-      // show alert profile is live
-      alert("Resume has been live");
+      afterSubmit(resume);
+
       toggle();
     } catch (err) {
       // show error
@@ -91,5 +92,6 @@ export default function ModalPublishResume({ open, toggle, getValues }) {
 
 ModalPublishResume.propTypes = {
   open: PropTypes.bool.isRequired,
-  toggle: PropTypes.func.isRequired
+  toggle: PropTypes.func.isRequired,
+  afterSubmit: PropTypes.func.isRequired
 };

@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { useCallback, useRef, useState } from 'react';
-import { HiOutlineExternalLink, HiCamera, HiPlus, HiTrash, HiPencil, HiGlobe } from 'react-icons/hi';
+import { HiOutlineExternalLink, HiCamera, HiPlus, HiTrash, HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink } from 'react-icons/hi';
 import { FaMagic } from 'react-icons/fa';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -16,6 +16,7 @@ import ModalWorkExperience from '../components/ModalWorkExperience';
 import Input from '../components/Input';
 import useYupValidationResolver from '../hooks/useYupValidationResolver';
 import PreviewResume from '../components/PreviewResume';
+import Modal from '../components/Modal';
 import ModalPublishResume from '../components/ModalPublishResume';
 import ModalPicturePicker from '../components/ModalPicturePicker';
 import ModalCustomizeLink from '../components/ModalCustomizeLink';
@@ -104,6 +105,7 @@ export default function Home() {
   const { open: modalwWorkExprienceOpen, toggle: modalWorkExperienceToggle } = useModal();
   const { open: modalPublishOpen, toggle: modalPublishToggle } = useModal();
   const { open: modalCustomizeLinkOpen, toggle: modalCustomizeLinkToggle } = useModal();
+  const { open: modalCongratulationsOpen, toggle: modalCongratulationsToggle } = useModal();
 
   const handlePictureclick = () => {
     if (picture) {
@@ -170,28 +172,27 @@ export default function Home() {
   };
 
   const fetchResume = useCallback(async () => {
-    setIsPageLoading(true);
-
     try {
+      setIsPageLoading(true);
       // fetch resumes  
       const data = await getResume(user.user_id);
 
       if (!data) {
         // register for new user that login
-        handleSubmit(onSubmit);
-      };
+        handleSubmit(onSubmit)();
+      } else {
+        // set to react hook form value
+        Object.entries(data).forEach((obj) => {
+          const [key, value] = obj;
+          setValue(key, value);
+        });
 
-      // set to react hook form value
-      Object.entries(data).forEach((obj) => {
-        const [key, value] = obj;
-        setValue(key, value);
-      });
-
-      setResume(data);
-
-      setIsPageLoading(false);
+        setResume(data);
+      }
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsPageLoading(false);
     }
   });
 
@@ -253,7 +254,6 @@ export default function Home() {
                   <span>Open in new tab</span>
                 </a>
               )}
-              {/* {isDirty && ( */}
               <button className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60" onClick={handleSubmit(onSubmit)} disabled={isSaveLoading}>
                 {!resume.user_id && (
                   <>
@@ -263,7 +263,6 @@ export default function Home() {
                 )}
                 {isLoggedIn && resume.user_id && "Save"}
               </button>
-              {/* )} */}
             </div>
             <div className="flex gap-4">
               <div className="w-full lg:min-w-[430px] lg:max-w-[430px]">
@@ -394,7 +393,7 @@ export default function Home() {
                 </div>
               </div>
               <div className='hidden lg:block w-full'>
-                <BrowserFrame url={`propil.io/${resume?.username || ""}`}>
+                <BrowserFrame url={`${window.location.origin}/${resume?.username || ""}`}>
                   <PreviewResume
                     name={name}
                     age={age}
@@ -443,6 +442,10 @@ export default function Home() {
             open={modalPublishOpen}
             toggle={modalPublishToggle}
             getValues={getValues}
+            afterSubmit={(data) => {
+              setResume(data);
+              modalCongratulationsToggle();
+            }}
           />
 
           {/* Modal Customize Link */}
@@ -461,6 +464,35 @@ export default function Home() {
               }}
             />
           )}
+
+          {/* Modal Congratz Resume is live */}
+          <Modal open={modalCongratulationsOpen} toggle={modalCongratulationsToggle}>
+            <div className="text-center">
+              <h1 className="font-bold text-3xl">Congratulations Your Resume is Live</h1>
+            </div>
+            <div className="relative w-full rounded-xl overflow-hidden mb-4">
+              <img src="/congratz.jpeg" className='w-full h-[230px] object-cover' />
+            </div>
+            <p className="mb-4">Horray, now you can share you resume to your friends with the following link</p>
+
+            <div className="bg-gray-100 w-full flex justify-between">
+              <div className="py-2 px-4">
+                {window.location.origin}/{resume.username}
+              </div>
+              <div className="flex">
+                <button className="bg-gray-200 text-black py-2 px-4">
+                  <HiClipboardCopy className='inline mr-4' />
+                  Copy
+                </button>
+                <a href={`${window.location.host}/${resume.username}`} target="_blank">
+                  <button className="bg-black text-white py-2 px-4">
+                    <HiExternalLink className='inline mr-4' />
+                    Open new Tab
+                  </button>
+                </a>
+              </div>
+            </div>
+          </Modal>
 
           <Footer />
         </div>
