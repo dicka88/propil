@@ -6,6 +6,8 @@ export const getResume = async (user_id) => {
   const q = query(collection(db, 'resumes'), where("user_id", "==", user_id));
   const doc = await getDocs(q);
 
+  if (doc.empty) return null;
+
   let data = {};
   doc.forEach((item) => {
     data = item.data();
