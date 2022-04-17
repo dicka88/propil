@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { useCallback, useRef, useState } from 'react';
-import { HiOutlineExternalLink, HiCamera, HiPlus, HiPhotograph, HiCheck, HiTrash, HiPencil, HiGlobe } from 'react-icons/hi';
+import { HiOutlineExternalLink, HiCamera, HiPlus, HiTrash, HiPencil, HiGlobe } from 'react-icons/hi';
+import { FaMagic } from 'react-icons/fa';
 import TextareaAutosize from 'react-textarea-autosize';
-import { Cropper } from 'react-cropper';
 import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import ReactLoading from 'react-loading';
@@ -12,12 +12,12 @@ import "cropperjs/dist/cropper.css";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BrowserFrame from '../components/BrowserFrame';
-import Modal from '../components/Modal';
 import ModalWorkExperience from '../components/ModalWorkExperience';
 import Input from '../components/Input';
 import useYupValidationResolver from '../hooks/useYupValidationResolver';
 import PreviewResume from '../components/PreviewResume';
 import ModalPublishResume from '../components/ModalPublishResume';
+import ModalPicturePicker from '../components/ModalPicturePicker';
 
 import useModal from '../hooks/useModal';
 import useAuth from '../zustand/auth';
@@ -26,7 +26,7 @@ import { getResume, updateResume } from '../services/resume.service';
 
 const validatorSchema = yup.object({
   picture: yup.string().required("Picture is required"),
-  name: yup.string().required("Fullname is required"),
+  name: yup.string().required("Full Name is required"),
   jobTitle: yup.string().notRequired(),
   age: yup.number().min(10, "You are too younger, min age is 10").max(120).required("Age is required").nullable(),
   intro: yup.string().notRequired()
@@ -111,15 +111,6 @@ export default function Home() {
     if (!picture) {
       modalPictureToggle();
     }
-  };
-
-  const handleSavePicture = () => {
-    const picture = cropperInstance.getCroppedCanvas().toDataURL();
-
-    setValue('picture', picture);
-    // TODO: should fix this
-    // desc: when save and toggle hide the modal, then open modal again, the cropperjs will bugly, the cropview size be smaller
-    setTimeout(modalPictureToggle, 100);
   };
 
   const handleWorkExperienceSubmit = (data) => {
@@ -213,8 +204,9 @@ export default function Home() {
       {!isPageLoading && (
         <div className="container py-4">
           <main>
-            <div className="flex justify-end items-center mb-4">
-              <button className="bg-black text-white py-2 px-4 rounded-md shadow disabled:opacity-60" disabled={isSaveLoading}>
+            <div className="flex gap-2 justify-end items-center mb-4">
+              <button className=" text-black py-2 px-4 rounded-md shadow disabled:opacity-60" disabled={isSaveLoading}>
+                <FaMagic className="inline mr-4" />
                 Customize link
               </button>
               {submitMessage && (
@@ -233,17 +225,17 @@ export default function Home() {
                   <span>Open in new tab</span>
                 </a>
               )}
-              {isDirty && (
-                <button className="bg-black text-white py-2 px-4 rounded-md shadow disabled:opacity-60" onClick={handleSubmit(onSubmit)} disabled={isSaveLoading}>
-                  {!resume.user_id && (
-                    <>
-                      <HiGlobe className="inline mr-4" />
-                      <span>Publish</span>
-                    </>
-                  )}
-                  {isDirty && isLoggedIn && resume.user_id && "Save"}
-                </button>
-              )}
+              {/* {isDirty && ( */}
+              <button className="bg-black text-white py-2 px-4 rounded-md shadow disabled:opacity-60" onClick={handleSubmit(onSubmit)} disabled={isSaveLoading}>
+                {!resume.user_id && (
+                  <>
+                    <HiGlobe className="inline mr-4" />
+                    <span>Publish</span>
+                  </>
+                )}
+                {isDirty && isLoggedIn && resume.user_id && "Save"}
+              </button>
+              {/* )} */}
             </div>
             <div className="flex gap-4">
               <div className="w-full lg:min-w-[430px] lg:max-w-[430px]">
@@ -274,7 +266,7 @@ export default function Home() {
                     <div className="mb-4">
                       <p className="font-bold mb-2">Personal Information</p>
                       <div className="mb-2">
-                        <label htmlFor="" className="text-gray-500">Fullname</label>
+                        <label htmlFor="" className="text-gray-500">Full Name</label>
                         <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name} />
                         {errors.name?.type === 'required' && <small className="text-red-500">{errors.name.message}</small>}
                       </div>
@@ -389,45 +381,24 @@ export default function Home() {
             </div>
           </main>
 
-          {/* Modal picture picker */}
-          <Modal
+          {/* Modal Picture Picker */}
+          <ModalPicturePicker
             open={modalPictureOpen}
             toggle={modalPictureToggle}
-            title="Upload Picture"
-          >
-            <Cropper
-              viewMode={1}
-              src={tempPicture}
-              initialAspectRatio={1 / 1}
-              aspectRatio={1 / 1}
-              style={{ height: 400, width: "100%" }}
-              draggable={false}
-              cropBoxResizable={false}
-              guides={false}
-              shape="circle"
-              dragMode="move"
-              center
-              cropBoxMovable={false}
-              autoCrop
-              onInitialized={(instance) => setCropperInstance(instance)}
-            />
-            <div className="mb-4"></div>
-            <div className="flex gap-2 justify-end">
-              <button className="py-2 px-4 border border-red-200 text-red-500 rounded-md" onClick={() => (setValue('picture', null), modalPictureToggle())}>
-                <HiTrash className="inline mr-4" />
-                Remove
-              </button>
-              <button className="py-2 px-4 text-black border rounded-md" onClick={() => pictureRef.current.click()}>
-                <HiPhotograph className="inline mr-4" />
-                Change Picture
-              </button>
-              <button className="py-2 px-4 bg-black text-white rounded-md" onClick={handleSavePicture}>
-                <HiCheck className="inline mr-4" />
-                Save
-              </button>
-            </div>
-          </Modal>
+            src={tempPicture}
+            inputPictureRef={pictureRef}
+            onRemove={() => {
+              setValue('picture', null);
+              setTempPicture(null);
+              modalPictureToggle();
+            }}
+            onSave={(base64) => {
+              setValue('picture', base64);
+              modalPictureToggle();
+            }}
+          />
 
+          {/* Modal Work Experience */}
           <ModalWorkExperience
             open={modalwWorkExprienceOpen}
             toggle={modalWorkExperienceToggle}
@@ -439,6 +410,7 @@ export default function Home() {
             }}
           />
 
+          {/* Modal Publish Resume */}
           <ModalPublishResume
             open={modalPublishOpen}
             toggle={modalPublishToggle}
