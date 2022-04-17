@@ -60,9 +60,9 @@ export default function ModalPicturePicker({ open, toggle, src, inputPictureRef,
 
 ModalPicturePicker.propTypes = {
   open: PropTypes.bool.isRequired,
-  toggle: PropTypes.bool.isRequired,
+  toggle: PropTypes.func.isRequired,
   src: PropTypes.string,
-  inputPictureRef: PropTypes.element.isRequired,
-  onSave: PropTypes.bool.isRequired,
-  onRemove: PropTypes.bool.isRequired,
+  inputPictureRef: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
 };

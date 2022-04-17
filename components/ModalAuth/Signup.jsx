@@ -60,7 +60,7 @@ export default function Signup({ setMode, toggle }) {
         className="w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-300 disabled:opacity-50"
         onClick={handleGoogleRegister}
       >
-        <FcGoogle className='inline mr-4' size="1.5rem" />
+        <FcGoogle className='inline mr-4' size={22} />
         Continue Sign Up with Google
       </button>
 

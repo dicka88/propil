@@ -10,12 +10,10 @@ import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 
 import useAuth from '../../zustand/auth';
-import useModalState from '../../zustand/modal';
 import { getUser } from '../../services/auth.service';
 
 export default function Signin({ setMode, toggle }) {
   const { login } = useAuth();
-  const { setModalAuthMode, toggleModalAuth } = useModalState();
   const [errorMessage, setErrorMessage] = useState();
 
   const handleGoogleSignin = async () => {
@@ -36,7 +34,7 @@ export default function Signin({ setMode, toggle }) {
       const userFirestore = await getUser(token.user_id);
 
       if (!userFirestore.user_id) {
-        setErrorMessage("Google didn't yet registered, please register first");
+        setErrorMessage("Google didn't yet registered, please sign up first");
         return;
       };
 
@@ -60,7 +58,7 @@ export default function Signin({ setMode, toggle }) {
         className="w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-300 disabled:opacity-50"
         onClick={handleGoogleSignin}
       >
-        <FcGoogle className='inline mr-4' size="1.5rem" />
+        <FcGoogle className='inline mr-4' size={22} />
         Continue Sign In with Google
       </button>
 
