@@ -54,11 +54,13 @@ export default function ModalCustomizeLink({ open, toggle, resumeId, username, i
     try {
       setIsUsernameExist(false);
       setSubmitLoading(true);
-      const usernameExists = await getResumeByUsername(data.username);
+      if (data.username !== username) {
+        const usernameExists = await getResumeByUsername(data.username);
 
-      if (usernameExists) {
-        setIsUsernameExist(true);
-        return;
+        if (usernameExists) {
+          setIsUsernameExist(true);
+          return;
+        }
       }
 
       await updateResume(resumeId, data);
