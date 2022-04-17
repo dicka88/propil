@@ -23,6 +23,7 @@ import useModal from '../hooks/useModal';
 import useAuth from '../zustand/auth';
 
 import { getResume, updateResume } from '../services/resume.service';
+import useModalState from '../zustand/modal';
 
 const validatorSchema = yup.object({
   picture: yup.string().required("Picture is required"),
@@ -44,8 +45,8 @@ const initialForm = {
 
 export default function Home() {
   const { isLoggedIn, user } = useAuth();
+  const { toggleModalAuth, setModalAuthMode } = useModalState();
 
-  const [cropperInstance, setCropperInstance] = useState();
   const [resume, setResume] = useState({});
   const [tempPicture, setTempPicture] = useState();
   const [tempWorkExperience, setTempWorkExperience] = useState({
@@ -56,7 +57,17 @@ export default function Home() {
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [submitMessage, setSubmitMessage] = useState("");
 
-  const { register, unregister, control, handleSubmit, watch, getValues, setValue, reset, formState: { errors, isDirty }, } = useForm({
+  const {
+    register,
+    unregister,
+    control,
+    handleSubmit,
+    watch,
+    getValues,
+    setValue,
+    reset,
+    formState: { errors, isDirty }
+  } = useForm({
     resolver: useYupValidationResolver(validatorSchema)
   });
   const { fields: linkFields, append: linkFieldAppend, remove: linkFieldRemove } = useFieldArray({
@@ -73,7 +84,8 @@ export default function Home() {
     name: "workExperiences",
   });
 
-  register('picture');
+
+  register('picture', { value: "" });
   register('workExperiences', { value: [] });
   register('links', { value: [] });
 
@@ -131,7 +143,9 @@ export default function Home() {
   const onSubmit = async (data) => {
     // if not auth then show login modal
     if (!isLoggedIn) {
-      return alert("Login first");
+      setModalAuthMode('signin');
+      toggleModalAuth();
+      return;
     }
 
     // if auth and not yet published then show publish modal
@@ -205,10 +219,12 @@ export default function Home() {
         <div className="container py-4">
           <main>
             <div className="flex gap-2 justify-end items-center mb-4">
-              <button className=" text-black py-2 px-4 rounded-md shadow disabled:opacity-60" disabled={isSaveLoading}>
-                <FaMagic className="inline mr-4" />
-                Customize link
-              </button>
+              {isLoggedIn && resume.username && (
+                <button className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60" disabled={isSaveLoading}>
+                  <FaMagic className="inline mr-4" />
+                  Customize link
+                </button>
+              )}
               {submitMessage && (
                 <span className="mr-4">
                   {submitMessage}
@@ -219,21 +235,21 @@ export default function Home() {
                   <ReactLoading type="bubbles" color="#000" />
                 </span>
               )}
-              {!isDirty && resume.user_id && isLoggedIn && (
-                <a href={resume.username} className="bg-black text-white py-2 px-4 rounded-md shadow" target="_blank">
+              {resume.user_id && isLoggedIn && (
+                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow" target="_blank">
                   <HiOutlineExternalLink className="inline mr-4" />
                   <span>Open in new tab</span>
                 </a>
               )}
               {/* {isDirty && ( */}
-              <button className="bg-black text-white py-2 px-4 rounded-md shadow disabled:opacity-60" onClick={handleSubmit(onSubmit)} disabled={isSaveLoading}>
+              <button className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60" onClick={handleSubmit(onSubmit)} disabled={isSaveLoading}>
                 {!resume.user_id && (
                   <>
                     <HiGlobe className="inline mr-4" />
                     <span>Publish</span>
                   </>
                 )}
-                {isDirty && isLoggedIn && resume.user_id && "Save"}
+                {isLoggedIn && resume.user_id && "Save"}
               </button>
               {/* )} */}
             </div>
@@ -258,7 +274,7 @@ export default function Home() {
                           <HiCamera className="inline mr-2" />
                           Select your picture
                         </button>
-                        {errors.picture?.type === 'required' && <small className="text-red-500 block">{errors.picture.message}</small>}
+                        {errors.picture && <small className="text-red-500 block">Picture is required</small>}
                       </div>
                     </div>
 
@@ -272,7 +288,7 @@ export default function Home() {
                       </div>
                       <div className="mb-2">
                         <label htmlFor="" className="text-gray-500">Job Title (optional)</label>
-                        <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="Frontend Developer" />
+                        <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="e.g. Frontend Developer" />
                       </div>
                       <div className="mb-2">
                         <label htmlFor="" className="text-gray-500">
