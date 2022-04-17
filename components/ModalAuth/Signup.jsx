@@ -7,11 +7,12 @@ import {
 } from "firebase/auth";
 import Cookies from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
+import PropTypes from 'prop-types';
 
 import useAuth from '../../zustand/auth';
 import { getUser, addUser } from '../../services/auth.service';
 
-export default function Register({ setMode, toggle }) {
+export default function Signup({ setMode, toggle }) {
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState();
 
@@ -52,7 +53,7 @@ export default function Register({ setMode, toggle }) {
 
   return (
     <>
-      <p>Register with you google account, just one click</p>
+      <p>Sign Up with you google account, just one click</p>
       {errorMessage && (
         <p className="text-red-500">{errorMessage}</p>
       )}
@@ -72,3 +73,8 @@ export default function Register({ setMode, toggle }) {
     </>
   );
 }
+
+Signup.propTypes = {
+  toggle: PropTypes.func.isRequired,
+  setMode: PropTypes.func.isRequired
+};

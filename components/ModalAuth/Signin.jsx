@@ -7,12 +7,15 @@ import {
 } from "firebase/auth";
 import Cookies from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
+import PropTypes from 'prop-types';
 
 import useAuth from '../../zustand/auth';
+import useModalState from '../../zustand/modal';
 import { getUser } from '../../services/auth.service';
 
 export default function Signin({ setMode, toggle }) {
   const { login } = useAuth();
+  const { setModalAuthMode, toggleModalAuth } = useModalState();
   const [errorMessage, setErrorMessage] = useState();
 
   const handleGoogleSignin = async () => {
@@ -70,3 +73,8 @@ export default function Signin({ setMode, toggle }) {
     </>
   );
 }
+
+Signin.propTypes = {
+  toggle: PropTypes.func.isRequired,
+  setMode: PropTypes.func.isRequired
+};
