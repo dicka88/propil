@@ -176,7 +176,11 @@ export default function Home() {
       // fetch resumes  
       const data = await getResume(user.user_id);
 
-      if (!data) return;
+      if (!data) {
+        // register for new user that login
+        handleSubmit(onSubmit);
+      };
+
       // set to react hook form value
       Object.entries(data).forEach((obj) => {
         const [key, value] = obj;
@@ -196,6 +200,8 @@ export default function Home() {
     if (isLoggedIn) {
       fetchResume();
     } else {
+      // when logout
+      setResume({});
       setIsPageLoading(false);
       reset(initialForm);
     }
@@ -289,7 +295,7 @@ export default function Home() {
                       <p className="font-bold mb-2">Personal Information</p>
                       <div className="mb-2">
                         <label htmlFor="" className="text-gray-500">Full Name</label>
-                        <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name} />
+                        <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name && true} />
                         {errors.name?.type === 'required' && <small className="text-red-500">{errors.name.message}</small>}
                       </div>
                       <div className="mb-2">
@@ -300,7 +306,7 @@ export default function Home() {
                         <label htmlFor="" className="text-gray-500">
                           Age
                         </label>
-                        <Input register={register} name="age" type="number" min="10" max="150" placeholder="Min 10" isError={errors.age} />
+                        <Input register={register} name="age" type="number" min="10" max="150" placeholder="Min 10" isError={errors.age && true} />
                         {errors.age?.type === 'required' && <small className="text-red-500">{errors.age.message}</small>}
                         {errors.age?.type === 'max' && <small className="text-red-500">{errors.age.message}</small>}
                         {errors.age?.type === 'min' && <small className="text-red-500">{errors.age.message}</small>}
@@ -318,7 +324,7 @@ export default function Home() {
                       <div className="flex justify-between">
                         <p className="font-bold mb-2">Links</p>
                         <button type="button" className="hover:bg-gray-200 p-2 rounded-full" onClick={handleLinkAdd}>
-                          <HiPlus size="1rem" />
+                          <HiPlus size={16} />
                         </button>
                       </div>
                       {links?.length === 0 && (
@@ -348,7 +354,7 @@ export default function Home() {
                         <button type="button" className="hover:bg-gray-200 p-2 rounded-full"
                           onClick={() => (modalWorkExperienceToggle(), setTempWorkExperience({ index: null, data: null }))}
                         >
-                          <HiPlus size="1rem" />
+                          <HiPlus size={16} />
                         </button>
                       </div>
                       {workExperienceFields?.length === 0 && (
