@@ -12,8 +12,8 @@ export default function PreviewResume({
 }) {
   return (
     <>
-      <section className="container px-12 py-12 border-b bg-yellow-400">
-        <div className="flex flex-col lg:flex-row">
+      <section className="bg-yellow-400">
+        <div className="container px-12 py-12 border-b flex flex-col lg:flex-row">
           <div className="flex justify-center mb-8">
             {picture && (
               <div className="aspect-square rounded-full bg-gray-100 h-[100px] min-h-[100px] mr-6 overflow-hidden">

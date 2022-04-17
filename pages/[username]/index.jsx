@@ -6,7 +6,7 @@ import PreviewResume from '../../components/PreviewResume';
 
 function Username({ data }) {
   return (
-    <div className="max-w-[1000px] mx-auto lg:py-8">
+    <div className="mx-auto">
       <Head>
         <title>{data.name}</title>
         <link rel="icon" type="image/png" href={data.picture} />
