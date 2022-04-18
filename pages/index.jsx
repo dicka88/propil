@@ -242,7 +242,7 @@ export default function Home() {
                   onClick={modalCustomizeLinkToggle}
                 >
                   <FaMagic className="inline lg:mr-4" />
-                  <span className="hidden lg:block">
+                  <span className="hidden lg:inline-block">
                     Customize link
                   </span>
                 </button>
