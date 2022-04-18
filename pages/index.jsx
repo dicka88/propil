@@ -237,12 +237,14 @@ export default function Home() {
               {isLoggedIn && resume.username && (
                 <button
                   type="button"
-                  className="hidden lg:block text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
+                  className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
                   disabled={isSaveLoading}
                   onClick={modalCustomizeLinkToggle}
                 >
-                  <FaMagic className="inline mr-4" />
-                  Customize link
+                  <FaMagic className="inline lg:mr-4" />
+                  <span className="hidden lg:block">
+                    Customize link
+                  </span>
                 </button>
               )}
               {submitMessage && (
