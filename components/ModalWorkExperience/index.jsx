@@ -87,7 +87,7 @@ export default function ModalWorkExperience({
         setValue(key, value);
       });
     } else {
-      reset();
+      reset(initialFormValue);
     }
   }, [open]);
 
@@ -137,13 +137,13 @@ export default function ModalWorkExperience({
             <input
               {...register('endDate')}
               type="text"
-              className={classNames('w-full bg-gray-100 rounded-md px-2 py-2', { 'border border-red-500': errors.endDate })}
+              className={classNames('w-full bg-gray-100 rounded-md px-2 py-2 disabled:bg-gray-200', { 'border border-red-500': errors.endDate })}
               placeholder=""
               disabled={endDate === 'Present'}
             />
             {errors.endDate?.type === 'required' && <small className="text-red-500">{errors.endDate.message}</small>}
             <div>
-              <input type="checkbox" onChange={handleCheckboxEndDate} className="mr-2" />
+              <input type="checkbox" onChange={handleCheckboxEndDate} className="mr-2" checked={endDate === 'Present'} />
               <small>
                 Still on this position
               </small>
