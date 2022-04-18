@@ -37,6 +37,7 @@ export default function ModalWorkExperience({
   });
   register('companyLogo', '');
   const companyLogo = watch('companyLogo');
+  const endDate = watch('endDate');
 
   const pictureRef = useRef();
 
@@ -63,6 +64,15 @@ export default function ModalWorkExperience({
   const handleOnRemove = () => {
     onRemove();
     customToggle();
+  };
+
+  const handleCheckboxEndDate = (e) => {
+    const { checked } = e.target;
+    if (checked) {
+      setValue('endDate', 'Present');
+    } else {
+      setValue('endDate', '');
+    }
   };
 
   const customSubmit = (resume) => {
@@ -129,10 +139,11 @@ export default function ModalWorkExperience({
               type="text"
               className={classNames('w-full bg-gray-100 rounded-md px-2 py-2', { 'border border-red-500': errors.endDate })}
               placeholder=""
+              disabled={endDate === 'Present'}
             />
             {errors.endDate?.type === 'required' && <small className="text-red-500">{errors.endDate.message}</small>}
             <div>
-              <input type="checkbox" className="mr-2" />
+              <input type="checkbox" onChange={handleCheckboxEndDate} className="mr-2" />
               <small>
                 Still on this position
               </small>
