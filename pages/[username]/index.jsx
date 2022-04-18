@@ -2,11 +2,12 @@ import React from 'react';
 import Head from 'next/head';
 import Cookie from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
+import PropTypes from 'prop-types';
 
 import { getResumeByUsername } from '../../services/resume.service';
 import PreviewResume from '../../components/PreviewResume';
 
-function Username({ resume, user }) {
+export default function Username({ resume, user }) {
   return (
     <div className="mx-auto">
       <Head>
@@ -25,7 +26,7 @@ function Username({ resume, user }) {
         age={resume.age}
         picture={resume.picture}
         intro={resume.intro}
-        jobtitle={resume.jobTitle}
+        jobTitle={resume.jobTitle}
         workExperiences={resume.workExperiences}
         links={resume.links}
       />
@@ -37,9 +38,8 @@ export async function getServerSideProps(context) {
   const { username } = context.query;
   const { cookie } = context.req.headers;
 
-  const univeralCookie = new Cookie(cookie);
-  const token = univeralCookie.get('token');
-
+  const uCookie = new Cookie(cookie);
+  const token = uCookie.get('token');
   let user = null;
   if (token) {
     try {
@@ -49,28 +49,48 @@ export async function getServerSideProps(context) {
     }
   }
 
-
   const resume = await getResumeByUsername(username);
 
   if (!resume) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   // if resume is private and is not their own then return 404
   if (!resume.isPublic && resume.user_id !== user?.user_id) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   return {
     props: {
       user,
-      resume
-    }
+      resume,
+    },
   };
 }
 
-export default Username;
+Username.propTypes = {
+  resume: PropTypes.objectOf({
+    name: PropTypes.string,
+    picture: PropTypes.string,
+    age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    intro: PropTypes.string,
+    jobTitle: PropTypes.string,
+    workExperiences: PropTypes.arrayOf(PropTypes.shape({
+      company: PropTypes.string.isRequired,
+      companyLogo: PropTypes.string.isRequired,
+      startDate: PropTypes.string.isRequired,
+      endDate: PropTypes.string,
+      jobTitle: PropTypes.string.isRequired,
+      jobDescription: PropTypes.string.isRequired,
+    })),
+    links: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+    })),
+  }).isRequired,
+  user: PropTypes.object.isRequired,
+};

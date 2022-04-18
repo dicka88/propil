@@ -10,13 +10,17 @@ import Input from '../Input';
 import Modal from '../Modal';
 
 const validationSchema = yup.object({
-  username: yup.string().min(3).max(20).required('Customize link is required')
+  username: yup.string().min(3).max(20).required('Customize link is required'),
 });
 
-export default function ModalPublishResume({ open, toggle, getValues, afterSubmit }) {
+export default function ModalPublishResume({
+  open, toggle, getValues, afterSubmit,
+}) {
   const { user } = useAuth();
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
-    resolver: useYupValidationResolver(validationSchema)
+  const {
+    register, handleSubmit, setValue, watch, formState: { errors },
+  } = useForm({
+    resolver: useYupValidationResolver(validationSchema),
   });
   register('username');
   const username = watch('username');
@@ -30,7 +34,7 @@ export default function ModalPublishResume({ open, toggle, getValues, afterSubmi
     // check username
     const usernameExists = await getResumeUsername(data.username);
 
-    // if exist set non safe  
+    // if exist set non safe
     if (usernameExists) {
       setIsUsernameExist(true);
       return;
@@ -52,7 +56,7 @@ export default function ModalPublishResume({ open, toggle, getValues, afterSubmi
     } catch (err) {
       // show error
       console.log(err);
-      alert("Something error has happen");
+      alert('Something error has happen');
     }
   };
 
@@ -68,7 +72,7 @@ export default function ModalPublishResume({ open, toggle, getValues, afterSubmi
         <p>Make your resume is public, so your friend can see</p>
         <div>
           <div className="flex items-center bg-gray-100 px-2">
-            <span className='mr-0 text-gray-500'>propil.io/</span>
+            <span className="mr-0 text-gray-500">propil.io/</span>
             <Input
               onChange={handleUsernameChange}
               name="username"
@@ -93,5 +97,6 @@ export default function ModalPublishResume({ open, toggle, getValues, afterSubmi
 ModalPublishResume.propTypes = {
   open: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
-  afterSubmit: PropTypes.func.isRequired
+  getValues: PropTypes.func.isRequired,
+  afterSubmit: PropTypes.func.isRequired,
 };

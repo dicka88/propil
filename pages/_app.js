@@ -1,7 +1,8 @@
+import React, { useEffect } from 'react';
 import Head from 'next/head';
-import { useEffect } from 'react';
 import Cookies from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
+import PropTypes from 'prop-types';
 
 import '../firebase/firebase';
 import useAuth from '../zustand/auth';
@@ -22,7 +23,7 @@ function MyApp({ Component, pageProps }) {
         user = jwtDecode(accessToken);
         login(user);
       } catch (err) {
-
+        console.log(err);
       }
     }
   }, []);
@@ -44,3 +45,12 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp;
+
+MyApp.defaultProps = {
+  pageProps: {},
+};
+
+MyApp.propTypes = {
+  Component: PropTypes.node.isRequired,
+  pageProps: PropTypes.object,
+};

@@ -5,18 +5,36 @@
     },
     "extends": [
         "plugin:react/recommended",
+        "next/core-web-vitals",
         "airbnb"
     ],
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
         },
-        "ecmaVersion": "latest",
+        "ecmaVersion": 2015,
         "sourceType": "module"
     },
     "plugins": [
         "react"
     ],
     "rules": {
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx"
+                ]
+            }
+        ],
+        "react/jsx-props-no-spreading": "off",
+        "react/forbid-prop-types": "off",
+        "react/no-array-index-key": "off",
+        "jsx-a11y/label-has-associated-control": "off",
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/anchor-is-valid": "off"
     }
 }

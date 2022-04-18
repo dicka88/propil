@@ -6,9 +6,9 @@ export default function PreviewResume({
   age,
   picture,
   intro,
-  jobtitle,
+  jobTitle,
   workExperiences = [],
-  links = []
+  links = [],
 }) {
   return (
     <>
@@ -23,16 +23,16 @@ export default function PreviewResume({
           </div>
           <div>
             <h1 className="text-5xl font-bold mb-4">{name}</h1>
-            <h3 className="mb-2 font-medium">{jobtitle}</h3>
+            <h3 className="mb-2 font-medium">{jobTitle}</h3>
             <p className="mb-2 font-light">{age ? `${age} years old` : ''}</p>
             <p className="text-sm bg-blend-difference">{intro}</p>
             <div className="my-4 flex gap-2">
-              {links.map(({ label, url }, i) =>
-                label &&
-                <a href={url} key={i} target="_blank" className="text-black py-1 px-2 border border-black hover:bg-black hover:text-white hover:border-black transition-colors duration-300">
+              {links.map(({ label, url }, i) => label
+                && (
+                <a href={url} key={i} target="_blank" className="text-black py-1 px-2 border border-black hover:bg-black hover:text-white hover:border-black transition-colors duration-300" rel="noreferrer">
                   {label}
                 </a>
-              )}
+                ))}
             </div>
           </div>
         </div>
@@ -53,8 +53,14 @@ export default function PreviewResume({
                 </div>
                 <div>
                   <p className="font-semibold">{exp.company}</p>
-                  <p className='text-sm font-light'>{exp.jobTitle}</p>
-                  <p className='text-sm font-light my-2 text-gray-500'>{exp.startDate} - {exp.endDate || "Present"}</p>
+                  <p className="text-sm font-light">{exp.jobTitle}</p>
+                  <p className="text-sm font-light my-2 text-gray-500">
+                    {exp.startDate}
+                    {' '}
+                    -
+                    {' '}
+                    {exp.endDate || 'Present'}
+                  </p>
                   <p className="text-sm font-light whitespace-pre-line">
                     {exp.jobDescription}
                   </p>
@@ -68,22 +74,32 @@ export default function PreviewResume({
   );
 }
 
+PreviewResume.defaultProps = {
+  name: '',
+  picture: '',
+  age: '',
+  intro: '',
+  jobTitle: '',
+  workExperiences: [],
+  links: [],
+};
+
 PreviewResume.propTypes = {
   name: PropTypes.string,
   picture: PropTypes.string,
   age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   intro: PropTypes.string,
-  jobtitle: PropTypes.string,
+  jobTitle: PropTypes.string,
   workExperiences: PropTypes.arrayOf(PropTypes.shape({
     company: PropTypes.string.isRequired,
     companyLogo: PropTypes.string.isRequired,
     startDate: PropTypes.string.isRequired,
     endDate: PropTypes.string,
     jobTitle: PropTypes.string.isRequired,
-    jobDescription: PropTypes.string.isRequired
+    jobDescription: PropTypes.string.isRequired,
   })),
   links: PropTypes.arrayOf(PropTypes.shape({
     label: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired
-  }))
+    url: PropTypes.string.isRequired,
+  })),
 };

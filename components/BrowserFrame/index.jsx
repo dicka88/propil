@@ -17,21 +17,26 @@ export default function BrowserFrame({ url, children }) {
               <HiLockClosed className="inline mr-4" size={14} />
               {url}
             </div>
-            <a href={`${url}`} target="_blank">
+            <a href={`${url}`} target="_blank" rel="noreferrer">
               <HiOutlineExternalLink />
             </a>
           </div>
         </div>
         <span />
       </header>
-      <main className='min-h-[600px] border-l border border-b border-r border-gray-200 bg-white'>
+      <main className="min-h-[600px] border-l border border-b border-r border-gray-200 bg-white">
         {children}
       </main>
     </div>
   );
 }
 
+BrowserFrame.defaultProps = {
+  url: '',
+  children: '',
+};
+
 BrowserFrame.propTypes = {
   url: propTypes.string,
-  children: propTypes.node
+  children: propTypes.node,
 };

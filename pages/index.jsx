@@ -1,13 +1,17 @@
+import React, {
+  useEffect, useCallback, useRef, useState,
+} from 'react';
 import Head from 'next/head';
-import { useEffect } from 'react';
-import { useCallback, useRef, useState } from 'react';
-import { HiOutlineExternalLink, HiCamera, HiPlus, HiTrash, HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink } from 'react-icons/hi';
+import {
+  HiOutlineExternalLink, HiCamera, HiPlus, HiTrash,
+  HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink,
+} from 'react-icons/hi';
 import { FaMagic } from 'react-icons/fa';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import ReactLoading from 'react-loading';
-import "cropperjs/dist/cropper.css";
+import 'cropperjs/dist/cropper.css';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -23,26 +27,27 @@ import ModalCustomizeLink from '../components/ModalCustomizeLink';
 
 import useModal from '../hooks/useModal';
 import useAuth from '../zustand/auth';
-
-import { getResume, updateResume } from '../services/resume.service';
 import useModalState from '../zustand/modal';
 
+import { getResume, updateResume } from '../services/resume.service';
+
 const validatorSchema = yup.object({
-  picture: yup.string().required("Picture is required"),
-  name: yup.string().required("Full Name is required"),
+  picture: yup.string().required('Picture is required'),
+  name: yup.string().required('Full Name is required'),
   jobTitle: yup.string().notRequired(),
-  age: yup.number().min(10, "You are too younger, min age is 10").max(120).required("Age is required").nullable(),
-  intro: yup.string().notRequired()
+  age: yup.number().min(10, 'You are too younger, min age is 10').max(120).required('Age is required')
+    .nullable(),
+  intro: yup.string().notRequired(),
 });
 
 const initialForm = {
   picture: null,
-  name: "",
-  jobTitle: "",
+  name: '',
+  jobTitle: '',
   age: null,
   intro: null,
   links: [],
-  workExperinces: []
+  workExperinces: [],
 };
 
 export default function Home() {
@@ -53,11 +58,11 @@ export default function Home() {
   const [tempPicture, setTempPicture] = useState();
   const [tempWorkExperience, setTempWorkExperience] = useState({
     index: null,
-    data: null
+    data: null,
   });
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
-  const [submitMessage, setSubmitMessage] = useState("");
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const {
     register,
@@ -68,26 +73,25 @@ export default function Home() {
     getValues,
     setValue,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
-    resolver: useYupValidationResolver(validatorSchema)
+    resolver: useYupValidationResolver(validatorSchema),
   });
   const { fields: linkFields, append: linkFieldAppend, remove: linkFieldRemove } = useFieldArray({
     control,
-    name: "links",
+    name: 'links',
   });
   const {
     fields: workExperienceFields,
     append: workExperienceAppend,
     remove: workExperienceRemove,
-    update: workExperienceUpdate
+    update: workExperienceUpdate,
   } = useFieldArray({
     control,
-    name: "workExperiences",
+    name: 'workExperiences',
   });
 
-
-  register('picture', { value: "" });
+  register('picture', { value: '' });
   register('workExperiences', { value: [] });
   register('links', { value: [] });
 
@@ -109,7 +113,8 @@ export default function Home() {
 
   const handlePictureclick = () => {
     if (picture) {
-      return modalPictureToggle();
+      modalPictureToggle();
+      return;
     }
     pictureRef.current.click();
   };
@@ -154,14 +159,15 @@ export default function Home() {
 
     // if auth and not yet published then show publish modal
     if (isLoggedIn && !resume.user_id) {
-      return modalPublishToggle();
+      modalPublishToggle();
+      return;
     }
 
     // if auth and already publish then just save
     try {
       setIsSaveLoading(true);
       await updateResume(resume.id, data);
-      setSubmitMessage("Successful saved");
+      setSubmitMessage('Successful saved');
       // clear dirty
       reset(data);
     } catch (e) {
@@ -174,7 +180,7 @@ export default function Home() {
   const fetchResume = useCallback(async () => {
     try {
       setIsPageLoading(true);
-      // fetch resumes  
+      // fetch resumes
       const data = await getResume(user.user_id);
 
       if (!data) {
@@ -230,7 +236,8 @@ export default function Home() {
             <div className="flex gap-2 justify-end items-center mb-4">
               {isLoggedIn && resume.username && (
                 <button
-                  className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
+                  type="button"
+                  className="hidden lg:block text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
                   disabled={isSaveLoading}
                   onClick={modalCustomizeLinkToggle}
                 >
@@ -249,36 +256,42 @@ export default function Home() {
                 </span>
               )}
               {resume.user_id && isLoggedIn && (
-                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow" target="_blank">
+                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow" target="_blank" rel="noreferrer">
                   <HiOutlineExternalLink className="inline mr-4" />
                   <span>Open in new tab</span>
                 </a>
               )}
-              <button className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60" onClick={handleSubmit(onSubmit)} disabled={isSaveLoading}>
+              <button
+                type="button"
+                className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60"
+                onClick={handleSubmit(onSubmit)}
+                disabled={isSaveLoading}
+              >
                 {!resume.user_id && (
                   <>
                     <HiGlobe className="inline mr-4" />
                     <span>Publish</span>
                   </>
                 )}
-                {isLoggedIn && resume.user_id && "Save"}
+                {isLoggedIn && resume.user_id && 'Save'}
               </button>
             </div>
             <div className="flex gap-4">
               <div className="w-full lg:min-w-[430px] lg:max-w-[430px]">
-                <div className='bg-white rounded-md p-4  shadow'>
+                <div className="bg-white rounded-md p-4  shadow">
                   <form onSubmit={handleSubmit(onSubmit)}>
 
                     {/* Picture */}
                     <div className="flex items-center mb-4 border-b pb-4">
                       <input ref={pictureRef} type="file" className="hidden w-0" accept="image/jpg,image/png,image/jpeg" onChange={handlePictureChange} />
-                      <div className="relative aspect-square bg-gray-100 w-20 rounded-full flex justify-center items-center overflow-hidden mr-6 hover:bg-gray-200 cursor-pointer" onClick={handlePictureclick}>
+                      <div
+                        className="relative aspect-square bg-gray-100 w-20 rounded-full flex justify-center items-center overflow-hidden mr-6 hover:bg-gray-200 cursor-pointer"
+                        onClick={handlePictureclick}
+                      >
                         <div className="absolute transition-colors duration-200 h-full w-full hover:bg-black hover:bg-opacity-25" />
-                        {picture ?
-                          <img src={picture} alt="" />
-                          :
-                          <HiCamera size={30} className="text-gray-400" />
-                        }
+                        {picture
+                          ? <img src={picture} alt="" />
+                          : <HiCamera size={30} className="text-gray-400" />}
                       </div>
                       <div>
                         <button type="button" className="px-2 py-1 bg-black text-white rounded-md" onClick={handlePictureclick}>
@@ -293,16 +306,16 @@ export default function Home() {
                     <div className="mb-4">
                       <p className="font-bold mb-2">Personal Information</p>
                       <div className="mb-2">
-                        <label htmlFor="" className="text-gray-500">Full Name</label>
+                        <label className="text-gray-500">Full Name</label>
                         <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name && true} />
                         {errors.name?.type === 'required' && <small className="text-red-500">{errors.name.message}</small>}
                       </div>
                       <div className="mb-2">
-                        <label htmlFor="" className="text-gray-500">Job Title (optional)</label>
+                        <label className="text-gray-500">Job Title (optional)</label>
                         <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="e.g. Frontend Developer" />
                       </div>
                       <div className="mb-2">
-                        <label htmlFor="" className="text-gray-500">
+                        <label className="text-gray-500">
                           Age
                         </label>
                         <Input register={register} name="age" type="number" min="10" max="150" placeholder="Min 10" isError={errors.age && true} />
@@ -331,7 +344,7 @@ export default function Home() {
                           No links
                         </div>
                       )}
-                      {linkFields.map((_, i) =>
+                      {linkFields.map((_, i) => (
                         <div key={i} className="group flex justify-between gap-2 mb-2">
                           <div className="basis-1/3">
                             <Input register={register} name={`links.${i}.label`} placeholder="Label" />
@@ -339,19 +352,24 @@ export default function Home() {
                           <div className="flex basis-2/3">
                             <Input register={register} name={`links.${i}.url`} placeholder="URL" />
                           </div>
-                          <button type='button' className='text-gray-500 hover:text-red-500 p-2 invisible group-hover:visible' onClick={() => linkFieldRemove(i)}>
+                          <button type="button" className="text-gray-500 hover:text-red-500 p-2 lg:invisible group-hover:visible" onClick={() => linkFieldRemove(i)}>
                             <HiTrash />
                           </button>
                         </div>
-                      )}
+                      ))}
                     </div>
 
                     {/* Work experiences */}
                     <div className="mb-4">
                       <div className="flex justify-between mb-2">
                         <p className="font-bold mb-2">Work experience</p>
-                        <button type="button" className="hover:bg-gray-200 p-2 rounded-full"
-                          onClick={() => (modalWorkExperienceToggle(), setTempWorkExperience({ index: null, data: null }))}
+                        <button
+                          type="button"
+                          className="hover:bg-gray-200 p-2 rounded-full"
+                          onClick={() => {
+                            modalWorkExperienceToggle();
+                            setTempWorkExperience({ index: null, data: null });
+                          }}
                         >
                           <HiPlus size={16} />
                         </button>
@@ -361,7 +379,7 @@ export default function Home() {
                           No work experiences
                         </div>
                       )}
-                      {workExperienceFields?.map((_, i) =>
+                      {workExperienceFields?.map((_, i) => (
                         <div key={i} className="flex justify-between group gap-4 mb-4">
                           <div className="flex gap-4">
                             <div>
@@ -372,7 +390,13 @@ export default function Home() {
                             <div>
                               <p className="font-bold">{workExperiences[i]?.company}</p>
                               <p className="text-light">{workExperiences[i]?.jobTitle}</p>
-                              <p className="text-light text-gray-500 text-sm mb-2">{workExperiences[i]?.startDate} - {workExperiences[i]?.endDate || "Present"}</p>
+                              <p className="text-light text-gray-500 text-sm mb-2">
+                                {workExperiences[i]?.startDate}
+                                {' '}
+                                -
+                                {' '}
+                                {workExperiences[i]?.endDate || 'Present'}
+                              </p>
                               <p className="text-light text-sm whitespace-pre-line">
                                 {workExperiences[i]?.jobDescription}
                               </p>
@@ -380,30 +404,35 @@ export default function Home() {
                           </div>
 
                           <div className="lg:invisible transition-all duration-200 lg:group-hover:visible">
-                            <button type="button" className="hover:bg-gray-200 p-2 rounded-full"
-                              onClick={() => (setTempWorkExperience({ index: i, data: workExperiences[i] }), modalWorkExperienceToggle())}
+                            <button
+                              type="button"
+                              className="hover:bg-gray-200 p-2 rounded-full"
+                              onClick={() => {
+                                setTempWorkExperience({ index: i, data: workExperiences[i] });
+                                modalWorkExperienceToggle();
+                              }}
                             >
                               <HiPencil />
                             </button>
                           </div>
                         </div>
-                      )}
+                      ))}
                     </div>
                   </form>
                 </div>
               </div>
-              <div className='hidden lg:block w-full'>
-                <BrowserFrame url={`${window.location.origin}/${resume?.username || ""}`}>
+              <div className="hidden lg:block w-full">
+                <BrowserFrame url={`${window.location.origin}/${resume?.username || ''}`}>
                   <PreviewResume
                     name={name}
                     age={age}
                     picture={picture}
                     intro={intro}
-                    jobtitle={jobTitle}
+                    jobTitle={jobTitle}
                     workExperiences={workExperiences}
                     links={links}
                   />
-                </BrowserFrame >
+                </BrowserFrame>
               </div>
             </div>
           </main>
@@ -459,7 +488,7 @@ export default function Home() {
               afterSubmit={(data) => {
                 setResume({
                   ...resume,
-                  ...data
+                  ...data,
                 });
               }}
             />
@@ -471,22 +500,24 @@ export default function Home() {
               <h1 className="font-bold text-3xl">Congratulations Your Resume is Live</h1>
             </div>
             <div className="relative w-full rounded-xl overflow-hidden mb-4">
-              <img src="/congratz.jpeg" className='w-full h-[230px] object-cover' />
+              <img src="/congratz.jpeg" className="w-full h-[230px] object-cover" alt="Congratulations" />
             </div>
             <p className="mb-4">Horray, now you can share you resume to your friends with the following link</p>
 
             <div className="bg-gray-100 w-full flex justify-between">
               <div className="py-2 px-4">
-                {window.location.origin}/{resume.username}
+                {window.location.origin}
+                /
+                {resume.username}
               </div>
               <div className="flex">
-                <button className="bg-gray-200 text-black py-2 px-4">
-                  <HiClipboardCopy className='inline mr-4' />
+                <button type="button" className="bg-gray-200 text-black py-2 px-4">
+                  <HiClipboardCopy className="inline mr-4" />
                   Copy
                 </button>
-                <a href={`${window.location.host}/${resume.username}`} target="_blank">
-                  <button className="bg-black text-white py-2 px-4">
-                    <HiExternalLink className='inline mr-4' />
+                <a href={`${window.location.host}/${resume.username}`} target="_blank" rel="noreferrer">
+                  <button type="button" className="bg-black text-white py-2 px-4">
+                    <HiExternalLink className="inline mr-4" />
                     Open new Tab
                   </button>
                 </a>
@@ -497,7 +528,6 @@ export default function Home() {
           <Footer />
         </div>
       )}
-
     </>
   );
 }

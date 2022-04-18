@@ -12,16 +12,20 @@ import { getResumeByUsername, updateResume } from '../../services/resume.service
 import useYupValidationResolver from '../../hooks/useYupValidationResolver';
 
 const validationSchema = yup.object({
-  username: yup.string().min(3).max(20).required('Customize link is required')
+  username: yup.string().min(3).max(20).required('Customize link is required'),
 });
 
-export default function ModalCustomizeLink({ open, toggle, resumeId, username, isPublic, afterSubmit }) {
-  const { register, setValue, handleSubmit, watch, formState: { errors } } = useForm({
+export default function ModalCustomizeLink({
+  open, toggle, resumeId, username, isPublic, afterSubmit,
+}) {
+  const {
+    register, setValue, handleSubmit, watch, formState: { errors },
+  } = useForm({
     resolver: useYupValidationResolver(validationSchema),
     defaultValues: {
       username,
-      isPublic
-    }
+      isPublic,
+    },
   });
 
   const [isUsernameExist, setIsUsernameExist] = useState(false);
@@ -35,8 +39,8 @@ export default function ModalCustomizeLink({ open, toggle, resumeId, username, i
   const initialDataJSON = JSON.stringify({ username, isPublic });
   const formDataJSON = JSON.stringify({ username: usernameValue, isPublic: isPublicValue });
 
-  const handleVisibilityChange = (isPublic) => {
-    setValue('isPublic', isPublic);
+  const handleVisibilityChange = (mode) => {
+    setValue('isPublic', mode);
   };
 
   const handleUsernameChange = (e) => {
@@ -84,18 +88,19 @@ export default function ModalCustomizeLink({ open, toggle, resumeId, username, i
             <div className="flex rounded-full overflow-hidden mb-2 border">
               <button
                 type="button"
-                className={classNames("py-1 px-4", {
-                  "text-white bg-red-500": !isPublicValue,
-                  "text-black bg-gray-200": isPublicValue
+                className={classNames('py-1 px-4', {
+                  'text-white bg-red-500': !isPublicValue,
+                  'text-black bg-gray-200': isPublicValue,
                 })}
-                onClick={() => handleVisibilityChange(false)}>
+                onClick={() => handleVisibilityChange(false)}
+              >
                 Private
               </button>
               <button
                 type="button"
-                className={classNames("py-1 px-4", {
-                  "text-black bg-gray-200": !isPublicValue,
-                  "bg-green-500 text-white": isPublicValue
+                className={classNames('py-1 px-4', {
+                  'text-black bg-gray-200': !isPublicValue,
+                  'bg-green-500 text-white': isPublicValue,
                 })}
                 onClick={() => handleVisibilityChange(true)}
               >
@@ -107,7 +112,7 @@ export default function ModalCustomizeLink({ open, toggle, resumeId, username, i
         </div>
 
         <div className="flex items-center bg-gray-100 px-2">
-          <span className='mr-0 text-gray-500'>propil.io/</span>
+          <span className="mr-0 text-gray-500">propil.io/</span>
           <Input
             register={register}
             onChange={handleUsernameChange}
@@ -132,9 +137,9 @@ export default function ModalCustomizeLink({ open, toggle, resumeId, username, i
           )}
           <button
             type="submit"
-            className={classNames("py-2 px-6 text-white rounded-md", {
-              "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500": !submitLoading && initialDataJSON !== formDataJSON,
-              "bg-gray-300": submitLoading || initialDataJSON === formDataJSON
+            className={classNames('py-2 px-6 text-white rounded-md', {
+              'bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500': !submitLoading && initialDataJSON !== formDataJSON,
+              'bg-gray-300': submitLoading || initialDataJSON === formDataJSON,
             })}
             disabled={submitLoading || initialDataJSON === formDataJSON}
           >
@@ -147,10 +152,15 @@ export default function ModalCustomizeLink({ open, toggle, resumeId, username, i
   );
 }
 
+ModalCustomizeLink.defaultProps = {
+  username: '',
+};
+
 ModalCustomizeLink.propTypes = {
   open: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
   isPublic: PropTypes.bool.isRequired,
+  resumeId: PropTypes.string.isRequired,
   username: PropTypes.string,
-  afterSubmit: PropTypes.func
+  afterSubmit: PropTypes.func.isRequired,
 };

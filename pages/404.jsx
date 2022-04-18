@@ -1,7 +1,7 @@
+import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react';
 
 function Error404() {
   return (
@@ -15,9 +15,9 @@ function Error404() {
             <Image src="/flame-error.png" layout="fill" objectFit="contain" />
           </div>
           <h1 className="font-light mb-8 text-gray-500">Look like the url is wrong</h1>
-          <Link href="/">
+          <Link href="/" passHref>
             <a>
-              <button className="bg-black text-white py-2 px-6 rounded-md">Make your own resume</button>
+              <button type="button" className="bg-black text-white py-2 px-6 rounded-md">Make your own resume</button>
             </a>
           </Link>
         </div>

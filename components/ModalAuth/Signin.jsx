@@ -4,7 +4,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-} from "firebase/auth";
+} from 'firebase/auth';
 import Cookies from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ export default function Signin({ setMode, toggle }) {
     const provider = new GoogleAuthProvider();
     try {
       const { user } = await signInWithPopup(getAuth(), provider);
-      const accessToken = user.accessToken;
+      const { accessToken } = user;
 
       const token = jwtDecode(accessToken);
 
@@ -28,7 +28,7 @@ export default function Signin({ setMode, toggle }) {
         user_id: token.user_id,
         name: token.name,
         email: token.email,
-        picture: token.picture
+        picture: token.picture,
       };
 
       const userFirestore = await getUser(token.user_id);
@@ -36,7 +36,7 @@ export default function Signin({ setMode, toggle }) {
       if (!userFirestore.user_id) {
         setErrorMessage("Google didn't yet registered, please sign up first");
         return;
-      };
+      }
 
       const cookies = new Cookies();
       cookies.set('token', accessToken, { path: '/' });
@@ -55,16 +55,17 @@ export default function Signin({ setMode, toggle }) {
         <p className="text-red-500">{errorMessage}</p>
       )}
       <button
+        type="button"
         className="w-full p-3 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-300 disabled:opacity-50"
         onClick={handleGoogleSignin}
       >
-        <FcGoogle className='inline mr-4' size={22} />
+        <FcGoogle className="inline mr-4" size={22} />
         Continue Sign In with Google
       </button>
 
       <p className="text-gray-500">
         If you didn't yet have account, you can
-        {" "}
+        {' '}
         <span className="cursor-pointer text-blue-700 hover:underline" onClick={() => setMode('signup')}>signup</span>
       </p>
     </>
@@ -73,5 +74,5 @@ export default function Signin({ setMode, toggle }) {
 
 Signin.propTypes = {
   toggle: PropTypes.func.isRequired,
-  setMode: PropTypes.func.isRequired
+  setMode: PropTypes.func.isRequired,
 };

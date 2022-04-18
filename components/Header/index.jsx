@@ -33,7 +33,7 @@ export default function Header() {
   return (
     <>
       <header className="mb-2">
-        <nav className='p-4 bg-white rounded-md shadow flex justify-between items-center'>
+        <nav className="p-4 bg-white rounded-md shadow flex justify-between items-center">
           <Link href="/" passHref>
             <a>
               <div className="flex items-center text-green-500">
@@ -52,16 +52,16 @@ export default function Header() {
                 </span>
                 <div className="group relative">
                   <div className="aspect-square rounded-full bg-gray-100 h-[50px] min-h-[50px] overflow-hidden cursor-pointer">
-                    <img src={user.picture} />
+                    <img src={user.picture} alt="" />
                   </div>
                   <div className="absolute invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 top-full right-0 py-4 z-10">
                     <div className="bg-white rounded-md shadow py-4 min-w-[160px]">
-                      <button className="py-1 text-gray-500 hover:bg-gray-100 text-left px-4 w-full opacity-60">
-                        <HiUser className='inline mr-4' />
+                      <button type="button" className="py-1 text-gray-500 hover:bg-gray-100 text-left px-4 w-full opacity-60">
+                        <HiUser className="inline mr-4" />
                         Profile
                       </button>
-                      <button className="py-2 text-red-500 hover:bg-gray-100 text-left px-4 w-full" onClick={handleLogout}>
-                        <HiLogout className='inline mr-4' />
+                      <button type="button" className="py-2 text-red-500 hover:bg-gray-100 text-left px-4 w-full" onClick={handleLogout}>
+                        <HiLogout className="inline mr-4" />
                         Logout
                       </button>
                     </div>
@@ -70,8 +70,8 @@ export default function Header() {
               </>
             ) : (
               <>
-                <button className="py-2 px-4 rounded-lg bg-green-500 text-white" onClick={handleSigninClick}>Sign In</button>
-                <button className="py-2 px-4 rounded-lg bg-gray-100" onClick={handleSignupClick}>Sign Up</button>
+                <button type="button" className="py-2 px-4 rounded-lg bg-green-500 text-white" onClick={handleSigninClick}>Sign In</button>
+                <button type="button" className="py-2 px-4 rounded-lg bg-gray-100" onClick={handleSignupClick}>Sign Up</button>
               </>
             )}
           </div>
