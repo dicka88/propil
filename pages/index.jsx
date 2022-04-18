@@ -513,11 +513,11 @@ export default function Home() {
                 {resume.username}
               </div>
               <div className="flex">
-                <button type="button" className="bg-gray-200 text-black py-2 px-4">
+                <button type="button" className="bg-gray-200 text-black py-2 px-4" onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${resume.username}`)}>
                   <HiClipboardCopy className="inline mr-4" />
                   Copy
                 </button>
-                <a href={`${window.location.host}/${resume.username}`} target="_blank" rel="noreferrer">
+                <a href={`${window.location.origin}/${resume.username}`} target="_blank" rel="noreferrer">
                   <button type="button" className="bg-black text-white py-2 px-4">
                     <HiExternalLink className="inline mr-4" />
                     Open new Tab

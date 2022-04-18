@@ -50,7 +50,7 @@ export default function ModalCustomizeLink({
   };
 
   const handleCopyLink = () => {
-    const url = `${window.location.host}/${usernameValue}`;
+    const url = `${window.location.origin}/${usernameValue}`;
     navigator.clipboard.writeText(url);
   };
 

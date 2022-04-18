@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
+import ReactLoading from 'react-loading';
 
 import useYupValidationResolver from '../../hooks/useYupValidationResolver';
 import { createResume, getResumeUsername } from '../../services/resume.service';
@@ -26,11 +27,13 @@ export default function ModalPublishResume({
   const username = watch('username');
 
   const [isUsernameExist, setIsUsernameExist] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const onSubmit = async (data) => {
     const formValues = getValues();
     // set username non safe
     setIsUsernameExist(false);
+    setSubmitLoading(true);
     // check username
     const usernameExists = await getResumeUsername(data.username);
 
@@ -49,7 +52,6 @@ export default function ModalPublishResume({
     try {
       await createResume(newData);
       const resume = await getResumeUsername(data.username);
-
       afterSubmit(resume);
 
       toggle();
@@ -57,6 +59,8 @@ export default function ModalPublishResume({
       // show error
       console.log(err);
       alert('Something error has happen');
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -84,8 +88,17 @@ export default function ModalPublishResume({
           {errors.username && <p className="text-red-500">{errors.username.message}</p>}
           {isUsernameExist && <p className="text-red-500">Username has been used another</p>}
         </div>
-        <div className="flex justify-end">
-          <button type="submit" className="py-2 px-4 bg-black text-white rounded-md hover:bg-gray-700">
+        <div className="flex justify-end items-center">
+          {submitLoading && (
+          <span>
+            <ReactLoading type="bubbles" color="#000" height={25} width={25} className="mr-6" />
+          </span>
+          )}
+          <button
+            type="submit"
+            className="py-2 px-4 bg-black text-white rounded-md hover:bg-gray-700 disabled:bg-gray-300"
+            disabled={submitLoading}
+          >
             Publish now
           </button>
         </div>

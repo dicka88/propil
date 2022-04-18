@@ -4,12 +4,12 @@ import { db } from '../firebase/firebase';
 
 export const getResume = async (user_id) => {
   const q = query(collection(db, 'resumes'), where("user_id", "==", user_id));
-  const doc = await getDocs(q);
+  const snapshot = await getDocs(q);
 
-  if (doc.empty) return null;
+  if (snapshot.empty) return null;
 
   let data = {};
-  doc.forEach((item) => {
+  snapshot.forEach((item) => {
     data = item.data();
     data.id = item.id;
   });
@@ -19,12 +19,12 @@ export const getResume = async (user_id) => {
 
 export const getResumeByUsername = async (username) => {
   const q = query(collection(db, 'resumes'), where("username", "==", username));
-  const doc = await getDocs(q);
+  const snapshot = await getDocs(q);
 
-  if (doc.empty) return null;
+  if (snapshot.empty) return null;
 
   let data = {};
-  doc.forEach((item) => {
+  snapshot.forEach((item) => {
     data = item.data();
     data.id = item.id;
   });
@@ -34,8 +34,8 @@ export const getResumeByUsername = async (username) => {
 
 export const createResume = async (data) => {
   const ref = collection(db, 'resumes');
-  const doc = await addDoc(ref, data);
-  return doc;
+  const snapshot = await addDoc(ref, data);
+  return snapshot;
 };
 
 export const updateResume = async (id, data) => {
@@ -46,7 +46,15 @@ export const updateResume = async (id, data) => {
 
 export const getResumeUsername = async (username) => {
   const q = query(collection(db, 'resumes'), where("username", "==", username));
-  const doc = await getDocs(q);
+  const snapshot = await getDocs(q);
 
-  return !doc.empty;
+  if (snapshot.empty) return null;
+
+  let data = {};
+  snapshot.forEach((item) => {
+    data = item.data();
+    data.id = item.id;
+  });
+
+  return data;
 };
