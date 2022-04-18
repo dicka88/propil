@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }) {
         user = jwtDecode(accessToken);
         login(user);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
   }, []);

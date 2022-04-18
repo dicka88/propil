@@ -46,7 +46,7 @@ export default function Signup({ setMode, toggle }) {
       login(data);
       toggle();
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 

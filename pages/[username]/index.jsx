@@ -45,7 +45,7 @@ export async function getServerSideProps(context) {
     try {
       user = jwtDecode(token);
     } catch (err) {
-      console.eror(err);
+      // console.eror(err);
     }
   }
 

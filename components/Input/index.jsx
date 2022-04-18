@@ -8,7 +8,7 @@ export default function Input({
   return (
     <input
       {...(register && register(name, registerConfig))}
-      className={classNames('bg-gray-100 w-full py-2 px-2 rounded-lg resize-none focus:ring-black focus:outline-black focus:border-black', className, {
+      className={classNames('bg-gray-100 w-full py-2 px-2 rounded-lg resize-none focus:ring-black focus:outline-black focus:border-black disabled:bg-gray-200', className, {
         'border border-red-500': isError,
       })}
       {...rest}

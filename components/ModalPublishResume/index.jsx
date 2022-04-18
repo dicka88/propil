@@ -57,7 +57,7 @@ export default function ModalPublishResume({
       toggle();
     } catch (err) {
       // show error
-      console.log(err);
+      // console.log(err);
       alert('Something error has happen');
     } finally {
       setSubmitLoading(false);

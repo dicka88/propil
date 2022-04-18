@@ -171,7 +171,7 @@ export default function Home() {
       // clear dirty
       reset(data);
     } catch (e) {
-      console.error(e);
+      // console.error(e);
     } finally {
       setIsSaveLoading(false);
     }
@@ -196,7 +196,7 @@ export default function Home() {
         setResume(data);
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setIsPageLoading(false);
     }

@@ -44,7 +44,7 @@ export default function Signin({ setMode, toggle }) {
       login(data);
       toggle();
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 

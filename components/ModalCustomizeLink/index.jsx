@@ -71,7 +71,7 @@ export default function ModalCustomizeLink({
       afterSubmit(data);
       toggle();
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     } finally {
       setSubmitLoading(false);
     }
