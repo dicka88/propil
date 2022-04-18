@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Cookies from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
+import { Toaster } from 'react-hot-toast';
 
 import '../firebase/firebase';
 import useAuth from '../zustand/auth';
@@ -39,6 +40,7 @@ function MyApp({ Component, pageProps }) {
         <meta name="msapplication-TileColor" content="#da532c" />
         <meta name="theme-color" content="#ffffff" />
       </Head>
+      <Toaster />
       <Component {...pageProps} />
     </>
   );
@@ -47,10 +49,11 @@ function MyApp({ Component, pageProps }) {
 export default MyApp;
 
 MyApp.defaultProps = {
+  Component: null,
   pageProps: {},
 };
 
 MyApp.propTypes = {
-  Component: PropTypes.node.isRequired,
+  Component: PropTypes.node,
   pageProps: PropTypes.object,
 };

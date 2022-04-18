@@ -11,6 +11,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import ReactLoading from 'react-loading';
+import toast from 'react-hot-toast';
 import 'cropperjs/dist/cropper.css';
 
 import Header from '../components/Header';
@@ -513,7 +514,14 @@ export default function Home() {
                 {resume.username}
               </div>
               <div className="flex">
-                <button type="button" className="bg-gray-200 text-black py-2 px-4" onClick={() => navigator.clipboard.writeText(`${window.location.origin}/${resume.username}`)}>
+                <button
+                  type="button"
+                  className="bg-gray-200 text-black py-2 px-4"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/${resume.username}`);
+                    toast.success('Link copied');
+                  }}
+                >
                   <HiClipboardCopy className="inline mr-4" />
                   Copy
                 </button>

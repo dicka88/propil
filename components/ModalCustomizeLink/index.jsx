@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import classNames from 'classnames';
 import ReactLoading from 'react-loading';
 import { HiOutlineClipboard } from 'react-icons/hi';
+import toast from 'react-hot-toast';
 
 import Modal from '../Modal';
 import Input from '../Input';
@@ -52,6 +53,7 @@ export default function ModalCustomizeLink({
   const handleCopyLink = () => {
     const url = `${window.location.origin}/${usernameValue}`;
     navigator.clipboard.writeText(url);
+    toast.success('Link copied');
   };
 
   const onSubmit = async (data) => {
@@ -70,6 +72,7 @@ export default function ModalCustomizeLink({
       await updateResume(resumeId, data);
       afterSubmit(data);
       toggle();
+      toast.success('Saved');
     } catch (err) {
       // console.log(err);
     } finally {
