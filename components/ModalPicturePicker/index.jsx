@@ -68,7 +68,7 @@ ModalPicturePicker.propTypes = {
   open: PropTypes.bool.isRequired,
   toggle: PropTypes.func.isRequired,
   src: PropTypes.string,
-  inputPictureRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }).isRequired,
+  inputPictureRef: PropTypes.shape({ current: PropTypes.any }).isRequired,
   onSave: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
 };
