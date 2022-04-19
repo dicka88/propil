@@ -115,8 +115,9 @@ export default function ModalCustomizeLink({
         </div>
 
         <div className="flex items-center bg-gray-100 px-2">
-          <span className="mr-0 text-gray-500">propil.io/</span>
+          <span className="mr-0 text-gray-500">{window.location.origin}</span>
           <Input
+            data-testid="username"
             register={register}
             onChange={handleUsernameChange}
             name="username"

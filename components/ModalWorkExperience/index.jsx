@@ -107,12 +107,12 @@ export default function ModalWorkExperience({
                 </button>
                 <span className="font-bold block">Company Logo</span>
                 {errors.companyLogo?.type === 'required' && <small className="text-red-500">{errors.companyLogo.message}</small>}
-
               </div>
             </div>
           </div>
           <p className="font-bold mb-2">Company</p>
           <input
+            data-testid="company"
             {...register('company')}
             type="text"
             className={classNames('w-full bg-gray-100 rounded-md px-2 py-2', { 'border border-red-500': errors.company })}
@@ -125,6 +125,7 @@ export default function ModalWorkExperience({
           <div className="w-full">
             <label className="font-bold mb-2">Start Date</label>
             <input
+              data-testid="startDate"
               {...register('startDate')}
               type="text"
               className={classNames('w-full bg-gray-100 rounded-md px-2 py-2', { 'border border-red-500': errors.startDate })}
@@ -135,6 +136,7 @@ export default function ModalWorkExperience({
           <div className="w-full">
             <label className="font-bold mb-2">End Date</label>
             <input
+              data-testid="endDate"
               {...register('endDate')}
               type="text"
               className={classNames('w-full bg-gray-100 rounded-md px-2 py-2 disabled:bg-gray-200', { 'border border-red-500': errors.endDate })}
@@ -143,7 +145,7 @@ export default function ModalWorkExperience({
             />
             {errors.endDate?.type === 'required' && <small className="text-red-500">{errors.endDate.message}</small>}
             <div>
-              <input type="checkbox" onChange={handleCheckboxEndDate} className="mr-2" checked={endDate === 'Present'} />
+              <input data-testid="checkbox-present" type="checkbox" onChange={handleCheckboxEndDate} className="mr-2" checked={endDate === 'Present'} />
               <small>
                 Still on this position
               </small>
@@ -154,6 +156,7 @@ export default function ModalWorkExperience({
         <div className="mb-4">
           <p className="font-bold mb-2">Job Title</p>
           <input
+            data-testid="jobTitle"
             {...register('jobTitle')}
             type="text"
             className={classNames('w-full bg-gray-100 rounded-md px-2 py-2', { 'border border-red-500': errors.jobTitle })}
@@ -165,6 +168,7 @@ export default function ModalWorkExperience({
         <div className="mb-4">
           <p className="font-bold">Job Description</p>
           <TextareaAutosize
+            data-testid="jobDescription"
             {...register('jobDescription')}
             placeholder="Set a message"
             minRows={3}

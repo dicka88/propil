@@ -29,7 +29,7 @@ export default function PreviewResume({
             <div className="my-4 flex gap-2">
               {links.map(({ label, url }, i) => label
                 && (
-                <a href={url} key={i} target="_blank" className="text-black py-1 px-2 border border-black hover:bg-black hover:text-white hover:border-black transition-colors duration-300" rel="noreferrer">
+                <a href={url} key={i} data-testid="links" target="_blank" className="text-black py-1 px-2 border border-black hover:bg-black hover:text-white hover:border-black transition-colors duration-300" rel="noreferrer">
                   {label}
                 </a>
                 ))}
@@ -45,7 +45,7 @@ export default function PreviewResume({
           )}
           <div>
             {workExperiences?.map((exp, i) => (
-              <div key={i} className="flex mb-4">
+              <div key={i} data-testid="workExperiences" className="flex mb-4">
                 <div>
                   <div className="aspect-square rounded-full bg-gray-100 h-[50px] mr-4 overflow-hidden">
                     <img src={exp.companyLogo} alt={exp.company} />
