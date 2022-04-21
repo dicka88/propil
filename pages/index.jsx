@@ -106,11 +106,11 @@ export default function Home() {
 
   const pictureRef = useRef();
 
-  const { open: modalPictureOpen, toggle: modalPictureToggle } = useModal();
-  const { open: modalwWorkExprienceOpen, toggle: modalWorkExperienceToggle } = useModal();
-  const { open: modalPublishOpen, toggle: modalPublishToggle } = useModal();
-  const { open: modalCustomizeLinkOpen, toggle: modalCustomizeLinkToggle } = useModal();
-  const { open: modalCongratulationsOpen, toggle: modalCongratulationsToggle } = useModal();
+  const [modalPictureOpen, modalPictureToggle] = useModal();
+  const [modalwWorkExprienceOpen, modalWorkExperienceToggle] = useModal();
+  const [modalPublishOpen, modalPublishToggle] = useModal();
+  const [modalCustomizeLinkOpen, modalCustomizeLinkToggle] = useModal();
+  const [modalCongratulationsOpen, modalCongratulationsToggle] = useModal();
 
   const handlePictureclick = () => {
     if (picture) {

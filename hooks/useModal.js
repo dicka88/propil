@@ -5,8 +5,10 @@ export default function useModal() {
 
   const toggle = () => setOpen(!open);
 
-  return {
-    open,
-    toggle
-  };
+  const modal = [open, toggle];
+
+  modal.open = open;
+  modal.toggle = toggle;
+
+  return modal;
 }
