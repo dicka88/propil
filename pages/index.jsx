@@ -194,6 +194,7 @@ export default function Home() {
           setValue(key, value);
         });
 
+        setTempPicture(data.picture);
         setResume(data);
       }
     } catch (err) {
