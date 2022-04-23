@@ -4,7 +4,7 @@ import React, {
 import Head from 'next/head';
 import {
   HiOutlineExternalLink, HiCamera, HiPlus, HiTrash,
-  HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink,
+  HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink, HiChartBar,
 } from 'react-icons/hi';
 import { FaMagic } from 'react-icons/fa';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -14,23 +14,24 @@ import ReactLoading from 'react-loading';
 import toast from 'react-hot-toast';
 import 'cropperjs/dist/cropper.css';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import BrowserFrame from '../components/BrowserFrame';
-import ModalWorkExperience from '../components/ModalWorkExperience';
-import Input from '../components/Input';
-import useYupValidationResolver from '../hooks/useYupValidationResolver';
-import PreviewResume from '../components/PreviewResume';
-import Modal from '../components/Modal';
-import ModalPublishResume from '../components/ModalPublishResume';
-import ModalPicturePicker from '../components/ModalPicturePicker';
-import ModalCustomizeLink from '../components/ModalCustomizeLink';
+import Link from 'next/link';
+import Header from '../src/components/Header';
+import Footer from '../src/components/Footer';
+import BrowserFrame from '../src/components/BrowserFrame';
+import ModalWorkExperience from '../src/components/ModalWorkExperience';
+import Input from '../src/components/Input';
+import useYupValidationResolver from '../src/hooks/useYupValidationResolver';
+import PreviewResume from '../src/components/PreviewResume';
+import Modal from '../src/components/Modal';
+import ModalPublishResume from '../src/components/ModalPublishResume';
+import ModalPicturePicker from '../src/components/ModalPicturePicker';
+import ModalCustomizeLink from '../src/components/ModalCustomizeLink';
 
-import useModal from '../hooks/useModal';
-import useAuth from '../zustand/auth';
-import useModalState from '../zustand/modal';
+import useModal from '../src/hooks/useModal';
+import useAuth from '../src/zustand/auth';
+import useModalState from '../src/zustand/modal';
 
-import { getResume, updateResume } from '../services/resume.service';
+import { getResume, updateResume } from '../src/services/resume.service';
 
 const validatorSchema = yup.object({
   picture: yup.string().required('Picture is required'),
@@ -235,7 +236,7 @@ export default function Home() {
       setIsPageLoading(false);
       reset(initialForm);
     }
-  }, [isLoggedIn]);
+  }, []);
 
   return (
     <>
@@ -256,50 +257,61 @@ export default function Home() {
       {!isPageLoading && (
         <div className="container py-4">
           <main>
-            <div className="flex gap-2 justify-end items-center mb-4">
-              {isLoggedIn && resume.username && (
+            <div className="flex gap-2 justify-between items-center mb-4">
+              <Link href="/analytics">
+                <a
+                  type="button"
+                  className="py-2 px-4 bg-white  rounded-md shadow border-2 border-purple-400"
+                >
+                  <HiChartBar className="inline mr-4" />
+                  Analytics
+                </a>
+              </Link>
+              <div className="flex gap-2">
+                {isLoggedIn && resume.username && (
                 <button
                   type="button"
                   className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
                   disabled={isSaveLoading}
                   onClick={modalCustomizeLinkToggle}
                 >
-                  <FaMagic className="inline lg:mr-4" />
+                  <FaMagic size={14} className="inline lg:mr-4" />
                   <span className="hidden lg:inline-block">
                     Customize link
                   </span>
                 </button>
-              )}
-              {submitMessage && (
+                )}
+                {submitMessage && (
                 <span className="mx-4">
                   {submitMessage}
                 </span>
-              )}
-              {isSaveLoading && (
+                )}
+                {isSaveLoading && (
                 <span className="mr-4">
                   <ReactLoading type="bubbles" color="#000" />
                 </span>
-              )}
-              {resume.user_id && isLoggedIn && (
-                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow" target="_blank" rel="noreferrer">
+                )}
+                {resume.user_id && isLoggedIn && (
+                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow bg-white" target="_blank" rel="noreferrer">
                   <HiOutlineExternalLink className="inline mr-4" />
                   <span>Open in new tab</span>
                 </a>
-              )}
-              <button
-                type="button"
-                className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60"
-                onClick={handleSubmit(onSubmit)}
-                disabled={isSaveLoading}
-              >
-                {!resume.user_id && (
+                )}
+                <button
+                  type="button"
+                  className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSaveLoading}
+                >
+                  {!resume.user_id && (
                   <>
                     <HiGlobe className="inline mr-4" />
                     <span>Publish</span>
                   </>
-                )}
-                {isLoggedIn && resume.user_id && 'Save'}
-              </button>
+                  )}
+                  {isLoggedIn && resume.user_id && 'Save'}
+                </button>
+              </div>
             </div>
             <div className="flex gap-4">
               <div className="w-full lg:min-w-[430px] lg:max-w-[430px]">

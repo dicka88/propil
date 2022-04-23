@@ -83,8 +83,8 @@ export default function PreviewResume({
           <h2 className="mb-4">Skills</h2>
           )}
           <div className="flex flex-wrap gap-2">
-            {skills?.map((skill) => (
-              <span className="py-1 px-2 rounded-lg bg-gray-100">
+            {skills?.map((skill, i) => (
+              <span key={i} className="py-1 px-2 rounded-lg bg-gray-100">
                 {skill}
               </span>
             ))}

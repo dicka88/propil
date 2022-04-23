@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import App from 'next/app';
 import Head from 'next/head';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { Toaster } from 'react-hot-toast';
 
-import BackdropLoader from '../components/BackdropLoader';
-import '../firebase/firebase';
-import useAuth from '../zustand/auth';
-import useHasMounted from '../hooks/useHasMounted';
+import BackdropLoader from '../src/components/BackdropLoader';
+import '../src/firebase/firebase';
+import useAuth from '../src/zustand/auth';
+import useHasMounted from '../src/hooks/useHasMounted';
 
-import '../styles/globals.css';
+import '../src/styles/globals.css';
 
 function MyApp({ Component, pageProps, user }) {
   const { login } = useAuth();

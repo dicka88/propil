@@ -4,8 +4,8 @@ import Cookie from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 
-import { getResumeByUsername } from '../../services/resume.service';
-import PreviewResume from '../../components/PreviewResume';
+import { getResumeByUsername } from '../../src/services/resume.service';
+import PreviewResume from '../../src/components/PreviewResume';
 
 export default function Username({ resume, user }) {
   return (
