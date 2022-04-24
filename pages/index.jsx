@@ -50,7 +50,7 @@ const initialForm = {
   intro: null,
   links: [],
   skills: [],
-  workExperinces: [],
+  workExperiences: [],
 };
 
 export default function Home() {
