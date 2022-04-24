@@ -4,12 +4,12 @@ import Cookie from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 
-import { getResumeByUsername } from '../../services/resume.service';
-import PreviewResume from '../../components/PreviewResume';
+import { getResumeByUsername } from '../../src/services/resume.service';
+import PreviewResume from '../../src/components/PreviewResume';
 
 export default function Username({ resume, user }) {
   return (
-    <div className="mx-auto">
+    <div className="mx-auto bg-white min-h-screen">
       <Head>
         <title>{resume.name}</title>
         <link rel="icon" type="image/png" href={resume.picture} />
@@ -29,6 +29,7 @@ export default function Username({ resume, user }) {
         jobTitle={resume.jobTitle}
         workExperiences={resume.workExperiences}
         links={resume.links}
+        skills={resume.skills}
       />
     </div>
   );
@@ -91,6 +92,7 @@ Username.propTypes = {
       label: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
     })),
+    skills: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
   user: PropTypes.object.isRequired,
 };

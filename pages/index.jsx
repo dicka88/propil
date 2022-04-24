@@ -4,7 +4,7 @@ import React, {
 import Head from 'next/head';
 import {
   HiOutlineExternalLink, HiCamera, HiPlus, HiTrash,
-  HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink,
+  HiPencil, HiGlobe, HiClipboardCopy, HiExternalLink, HiChartBar,
 } from 'react-icons/hi';
 import { FaMagic } from 'react-icons/fa';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -14,23 +14,24 @@ import ReactLoading from 'react-loading';
 import toast from 'react-hot-toast';
 import 'cropperjs/dist/cropper.css';
 
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import BrowserFrame from '../components/BrowserFrame';
-import ModalWorkExperience from '../components/ModalWorkExperience';
-import Input from '../components/Input';
-import useYupValidationResolver from '../hooks/useYupValidationResolver';
-import PreviewResume from '../components/PreviewResume';
-import Modal from '../components/Modal';
-import ModalPublishResume from '../components/ModalPublishResume';
-import ModalPicturePicker from '../components/ModalPicturePicker';
-import ModalCustomizeLink from '../components/ModalCustomizeLink';
+import Link from 'next/link';
+import Header from '../src/components/Header';
+import Footer from '../src/components/Footer';
+import BrowserFrame from '../src/components/BrowserFrame';
+import ModalWorkExperience from '../src/components/ModalWorkExperience';
+import Input from '../src/components/Input';
+import useYupValidationResolver from '../src/hooks/useYupValidationResolver';
+import PreviewResume from '../src/components/PreviewResume';
+import Modal from '../src/components/Modal';
+import ModalPublishResume from '../src/components/ModalPublishResume';
+import ModalPicturePicker from '../src/components/ModalPicturePicker';
+import ModalCustomizeLink from '../src/components/ModalCustomizeLink';
 
-import useModal from '../hooks/useModal';
-import useAuth from '../zustand/auth';
-import useModalState from '../zustand/modal';
+import useModal from '../src/hooks/useModal';
+import useAuth from '../src/zustand/auth';
+import useModalState from '../src/zustand/modal';
 
-import { getResume, updateResume } from '../services/resume.service';
+import { getResume, updateResume } from '../src/services/resume.service';
 
 const validatorSchema = yup.object({
   picture: yup.string().required('Picture is required'),
@@ -48,7 +49,8 @@ const initialForm = {
   age: null,
   intro: null,
   links: [],
-  workExperinces: [],
+  skills: [],
+  workExperiences: [],
 };
 
 export default function Home() {
@@ -57,6 +59,7 @@ export default function Home() {
 
   const [resume, setResume] = useState({});
   const [tempPicture, setTempPicture] = useState();
+  const [tempSkill, setTempSkill] = useState('');
   const [tempWorkExperience, setTempWorkExperience] = useState({
     index: null,
     data: null,
@@ -83,6 +86,14 @@ export default function Home() {
     name: 'links',
   });
   const {
+    fields: skillFields,
+    append: skillFieldAppend,
+    remove: skillFieldRemove,
+  } = useFieldArray({
+    control,
+    name: 'skills',
+  });
+  const {
     fields: workExperienceFields,
     append: workExperienceAppend,
     remove: workExperienceRemove,
@@ -93,24 +104,23 @@ export default function Home() {
   });
 
   register('picture', { value: '' });
-  register('workExperiences', { value: [] });
-  register('links', { value: [] });
 
   const name = watch('name');
   const jobTitle = watch('jobTitle');
   const age = watch('age');
   const intro = watch('intro');
   const picture = watch('picture');
-  const links = watch('links') || [];
-  const workExperiences = watch('workExperiences') || [];
+  const links = watch('links', []) || [];
+  const skills = watch('skills', []) || [];
+  const workExperiences = watch('workExperiences', []) || [];
 
   const pictureRef = useRef();
 
-  const { open: modalPictureOpen, toggle: modalPictureToggle } = useModal();
-  const { open: modalwWorkExprienceOpen, toggle: modalWorkExperienceToggle } = useModal();
-  const { open: modalPublishOpen, toggle: modalPublishToggle } = useModal();
-  const { open: modalCustomizeLinkOpen, toggle: modalCustomizeLinkToggle } = useModal();
-  const { open: modalCongratulationsOpen, toggle: modalCongratulationsToggle } = useModal();
+  const [modalPictureOpen, modalPictureToggle] = useModal();
+  const [modalwWorkExprienceOpen, modalWorkExperienceToggle] = useModal();
+  const [modalPublishOpen, modalPublishToggle] = useModal();
+  const [modalCustomizeLinkOpen, modalCustomizeLinkToggle] = useModal();
+  const [modalCongratulationsOpen, modalCongratulationsToggle] = useModal();
 
   const handlePictureclick = () => {
     if (picture) {
@@ -148,6 +158,18 @@ export default function Home() {
     if (links?.length > 0 && (!links[newLength - 1].label || !links[newLength - 1].url)) return;
 
     linkFieldAppend();
+  };
+
+  const handleSkillSubmit = (e) => {
+    e.preventDefault();
+    if (!tempSkill) {
+      return;
+    }
+
+    if (skills.length > 10) return;
+
+    skillFieldAppend(tempSkill);
+    setTempSkill('');
   };
 
   const onSubmit = async (data) => {
@@ -214,7 +236,7 @@ export default function Home() {
       setIsPageLoading(false);
       reset(initialForm);
     }
-  }, [isLoggedIn]);
+  }, []);
 
   return (
     <>
@@ -235,194 +257,235 @@ export default function Home() {
       {!isPageLoading && (
         <div className="container py-4">
           <main>
-            <div className="flex gap-2 justify-end items-center mb-4">
-              {isLoggedIn && resume.username && (
+            <div className="flex gap-2 justify-between items-center mb-4">
+              <Link href="/analytics">
+                <a
+                  type="button"
+                  className="py-2 px-4 bg-white  rounded-md shadow border-2 border-purple-400"
+                >
+                  <HiChartBar className="inline mr-4" />
+                  Analytics
+                </a>
+              </Link>
+              <div className="flex gap-2">
+                {isLoggedIn && resume.username && (
                 <button
                   type="button"
                   className="text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 py-2 px-4 rounded-md shadow disabled:opacity-60"
                   disabled={isSaveLoading}
                   onClick={modalCustomizeLinkToggle}
                 >
-                  <FaMagic className="inline lg:mr-4" />
+                  <FaMagic size={14} className="inline lg:mr-4" />
                   <span className="hidden lg:inline-block">
                     Customize link
                   </span>
                 </button>
-              )}
-              {submitMessage && (
-                <span className="mr-4">
+                )}
+                {submitMessage && (
+                <span className="mx-4">
                   {submitMessage}
                 </span>
-              )}
-              {isSaveLoading && (
+                )}
+                {isSaveLoading && (
                 <span className="mr-4">
                   <ReactLoading type="bubbles" color="#000" />
                 </span>
-              )}
-              {resume.user_id && isLoggedIn && (
-                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow" target="_blank" rel="noreferrer">
+                )}
+                {resume.user_id && isLoggedIn && (
+                <a href={resume.username} className="text-black py-2 px-4 rounded-md shadow bg-white" target="_blank" rel="noreferrer">
                   <HiOutlineExternalLink className="inline mr-4" />
                   <span>Open in new tab</span>
                 </a>
-              )}
-              <button
-                type="button"
-                className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60"
-                onClick={handleSubmit(onSubmit)}
-                disabled={isSaveLoading}
-              >
-                {!resume.user_id && (
+                )}
+                <button
+                  type="button"
+                  className="bg-black active:bg-slate-700 text-white py-2 px-4 rounded-md shadow disabled:opacity-60"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isSaveLoading}
+                >
+                  {!resume.user_id && (
                   <>
                     <HiGlobe className="inline mr-4" />
                     <span>Publish</span>
                   </>
-                )}
-                {isLoggedIn && resume.user_id && 'Save'}
-              </button>
+                  )}
+                  {isLoggedIn && resume.user_id && 'Save'}
+                </button>
+              </div>
             </div>
             <div className="flex gap-4">
               <div className="w-full lg:min-w-[430px] lg:max-w-[430px]">
                 <div className="bg-white rounded-md p-4  shadow">
-                  <form onSubmit={handleSubmit(onSubmit)}>
 
-                    {/* Picture */}
-                    <div className="flex items-center mb-4 border-b pb-4">
-                      <input ref={pictureRef} type="file" className="hidden w-0" accept="image/jpg,image/png,image/jpeg" onChange={handlePictureChange} />
-                      <div
-                        className="relative aspect-square bg-gray-100 w-20 rounded-full flex justify-center items-center overflow-hidden mr-6 hover:bg-gray-200 cursor-pointer"
-                        onClick={handlePictureclick}
-                      >
-                        <div className="absolute transition-colors duration-200 h-full w-full hover:bg-black hover:bg-opacity-25" />
-                        {picture
-                          ? <img src={picture} alt="" />
-                          : <HiCamera size={30} className="text-gray-400" />}
-                      </div>
-                      <div>
-                        <button type="button" className="px-2 py-1 bg-black text-white rounded-md" onClick={handlePictureclick}>
-                          <HiCamera className="inline mr-2" />
-                          Select your picture
-                        </button>
-                        {errors.picture && <small className="text-red-500 block">Picture is required</small>}
-                      </div>
+                  {/* Picture */}
+                  <div className="flex items-center mb-4 border-b pb-4">
+                    <input ref={pictureRef} type="file" className="hidden w-0" accept="image/jpg,image/png,image/jpeg" onChange={handlePictureChange} />
+                    <div
+                      className="relative aspect-square bg-gray-100 w-20 rounded-full flex justify-center items-center overflow-hidden mr-6 hover:bg-gray-200 cursor-pointer"
+                      onClick={handlePictureclick}
+                    >
+                      <div className="absolute transition-colors duration-200 h-full w-full hover:bg-black hover:bg-opacity-25" />
+                      {picture
+                        ? <img src={picture} alt="" />
+                        : <HiCamera size={30} className="text-gray-400" />}
                     </div>
-
-                    {/* Personal information */}
-                    <div className="mb-4">
-                      <p className="font-bold mb-2">Personal Information</p>
-                      <div className="mb-2">
-                        <label className="text-gray-500">Full Name</label>
-                        <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name && true} />
-                        {errors.name?.type === 'required' && <small className="text-red-500">{errors.name.message}</small>}
-                      </div>
-                      <div className="mb-2">
-                        <label className="text-gray-500">Job Title (optional)</label>
-                        <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="e.g. Frontend Developer" />
-                      </div>
-                      <div className="mb-2">
-                        <label className="text-gray-500">
-                          Age
-                        </label>
-                        <Input register={register} name="age" type="number" min="10" max="150" placeholder="Min 10" isError={errors.age && true} />
-                        {errors.age?.type === 'required' && <small className="text-red-500">{errors.age.message}</small>}
-                        {errors.age?.type === 'max' && <small className="text-red-500">{errors.age.message}</small>}
-                        {errors.age?.type === 'min' && <small className="text-red-500">{errors.age.message}</small>}
-                      </div>
-                      <div className="mb-2">
-                        <label htmlFor="" className="text-gray-500">
-                          Intro
-                        </label>
-                        <TextareaAutosize {...register('intro')} minRows={2} className="w-full bg-gray-100 rounded-md px-2 py-2 resize-none" placeholder="I like to code " />
-                      </div>
+                    <div>
+                      <button type="button" className="px-2 py-1 bg-black text-white rounded-md" onClick={handlePictureclick}>
+                        <HiCamera className="inline mr-2" />
+                        Select your picture
+                      </button>
+                      {errors.picture && <small className="text-red-500 block">Picture is required</small>}
                     </div>
+                  </div>
 
-                    {/* Links */}
-                    <div className="mb-4">
-                      <div className="flex justify-between">
-                        <p className="font-bold mb-2">Links</p>
-                        <button type="button" className="hover:bg-gray-200 p-2 rounded-full" onClick={handleLinkAdd}>
-                          <HiPlus size={16} />
-                        </button>
-                      </div>
-                      {links?.length === 0 && (
-                        <div className="text-center text-gray-500">
-                          No links
+                  {/* Personal information */}
+                  <div className="mb-4">
+                    <p className="font-bold mb-2">Personal Information</p>
+                    <div className="mb-2">
+                      <label className="text-gray-500">Full Name</label>
+                      <Input register={register} name="name" type="text" placeholder="John Doe" isError={errors.name && true} />
+                      {errors.name?.type === 'required' && <small className="text-red-500">{errors.name.message}</small>}
+                    </div>
+                    <div className="mb-2">
+                      <label className="text-gray-500">Job Title (optional)</label>
+                      <input {...register('jobTitle')} type="text" className="w-full bg-gray-100 rounded-md px-2 py-2" placeholder="e.g. Frontend Developer" />
+                    </div>
+                    <div className="mb-2">
+                      <label className="text-gray-500">
+                        Age
+                      </label>
+                      <Input register={register} name="age" type="number" min="10" max="150" placeholder="Min 10" isError={errors.age && true} />
+                      {errors.age?.type === 'required' && <small className="text-red-500">{errors.age.message}</small>}
+                      {errors.age?.type === 'max' && <small className="text-red-500">{errors.age.message}</small>}
+                      {errors.age?.type === 'min' && <small className="text-red-500">{errors.age.message}</small>}
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="" className="text-gray-500">
+                        Intro
+                      </label>
+                      <TextareaAutosize {...register('intro')} minRows={2} className="w-full bg-gray-100 rounded-md px-2 py-2 resize-none" placeholder="I like to code " />
+                    </div>
+                  </div>
+
+                  {/* Links */}
+                  <div className="mb-4">
+                    <div className="flex justify-between">
+                      <p className="font-bold mb-2">Links</p>
+                      <button type="button" className="hover:bg-gray-200 p-2 rounded-full" onClick={handleLinkAdd}>
+                        <HiPlus size={16} />
+                      </button>
+                    </div>
+                    {links?.length === 0 && (
+                    <div className="text-center text-gray-500">
+                      No links
+                    </div>
+                    )}
+                    {linkFields.map((data, i) => (
+                      <div key={data.id} className="group flex justify-between gap-2 mb-2">
+                        <div className="basis-1/3">
+                          <Input register={register} name={`links.${i}.label`} placeholder="Label" />
                         </div>
-                      )}
-                      {linkFields.map((_, i) => (
-                        <div key={i} className="group flex justify-between gap-2 mb-2">
-                          <div className="basis-1/3">
-                            <Input register={register} name={`links.${i}.label`} placeholder="Label" />
+                        <div className="flex basis-2/3">
+                          <Input register={register} name={`links.${i}.url`} placeholder="URL" />
+                        </div>
+                        <button type="button" className="text-gray-500 hover:text-red-500 p-2 lg:invisible group-hover:visible" onClick={() => linkFieldRemove(i)}>
+                          <HiTrash />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Skills */}
+                  <div className="mb-4">
+                    <div className="flex justify-between">
+                      <p className="font-bold mb-2">Skills</p>
+                    </div>
+                    <form onSubmit={handleSkillSubmit}>
+                      <div className="mb-4 flex gap-2">
+                        <Input
+                          name="link"
+                          placeholder="e.g Javascript, Python, React"
+                          value={tempSkill}
+                          onChange={(e) => setTempSkill(e.target.value)}
+                        />
+                        <button type="submit" className="px-2 hover:bg-gray-100 rounded-lg">
+                          Add
+                        </button>
+                      </div>
+                    </form>
+                    {skills?.length === 0 && (
+                      <div className="text-center text-gray-500">
+                        No skills
+                      </div>
+                    )}
+                    <div className="flex flex-wrap gap-2">
+                      {skillFields?.map((data, i) => (
+                        <span key={data.id} className="rounded-xl py-1 px-2 bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors duration-100 ease-in text-sm">
+                          {skills[i]}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Work experiences */}
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-2">
+                      <p className="font-bold mb-2">Work experience</p>
+                      <button
+                        type="button"
+                        className="hover:bg-gray-200 p-2 rounded-full"
+                        onClick={() => {
+                          modalWorkExperienceToggle();
+                          setTempWorkExperience({ index: null, data: null });
+                        }}
+                      >
+                        <HiPlus size={16} />
+                      </button>
+                    </div>
+                    {workExperienceFields?.length === 0 && (
+                    <div className="text-center text-gray-500">
+                      No work experiences
+                    </div>
+                    )}
+                    {workExperienceFields?.map((_, i) => (
+                      <div key={i} className="flex justify-between group gap-4 mb-4">
+                        <div className="flex gap-4">
+                          <div>
+                            <div className="aspect-square bg-gray-100 h-[40px] rounded-full overflow-hidden">
+                              <img src={workExperiences[i]?.companyLogo} alt="" />
+                            </div>
                           </div>
-                          <div className="flex basis-2/3">
-                            <Input register={register} name={`links.${i}.url`} placeholder="URL" />
+                          <div>
+                            <p className="font-bold">{workExperiences[i]?.company}</p>
+                            <p className="text-light">{workExperiences[i]?.jobTitle}</p>
+                            <p className="text-light text-gray-500 text-sm mb-2">
+                              {workExperiences[i]?.startDate}
+                              {' '}
+                              -
+                              {' '}
+                              {workExperiences[i]?.endDate || 'Present'}
+                            </p>
+                            <p className="text-light text-sm whitespace-pre-line">
+                              {workExperiences[i]?.jobDescription}
+                            </p>
                           </div>
-                          <button type="button" className="text-gray-500 hover:text-red-500 p-2 lg:invisible group-hover:visible" onClick={() => linkFieldRemove(i)}>
-                            <HiTrash />
+                        </div>
+
+                        <div className="lg:invisible transition-all duration-200 lg:group-hover:visible">
+                          <button
+                            type="button"
+                            className="hover:bg-gray-200 p-2 rounded-full"
+                            onClick={() => {
+                              setTempWorkExperience({ index: i, data: workExperiences[i] });
+                              modalWorkExperienceToggle();
+                            }}
+                          >
+                            <HiPencil />
                           </button>
                         </div>
-                      ))}
-                    </div>
-
-                    {/* Work experiences */}
-                    <div className="mb-4">
-                      <div className="flex justify-between mb-2">
-                        <p className="font-bold mb-2">Work experience</p>
-                        <button
-                          type="button"
-                          className="hover:bg-gray-200 p-2 rounded-full"
-                          onClick={() => {
-                            modalWorkExperienceToggle();
-                            setTempWorkExperience({ index: null, data: null });
-                          }}
-                        >
-                          <HiPlus size={16} />
-                        </button>
                       </div>
-                      {workExperienceFields?.length === 0 && (
-                        <div className="text-center text-gray-500">
-                          No work experiences
-                        </div>
-                      )}
-                      {workExperienceFields?.map((_, i) => (
-                        <div key={i} className="flex justify-between group gap-4 mb-4">
-                          <div className="flex gap-4">
-                            <div>
-                              <div className="aspect-square bg-gray-100 h-[40px] rounded-full overflow-hidden">
-                                <img src={workExperiences[i]?.companyLogo} alt="" />
-                              </div>
-                            </div>
-                            <div>
-                              <p className="font-bold">{workExperiences[i]?.company}</p>
-                              <p className="text-light">{workExperiences[i]?.jobTitle}</p>
-                              <p className="text-light text-gray-500 text-sm mb-2">
-                                {workExperiences[i]?.startDate}
-                                {' '}
-                                -
-                                {' '}
-                                {workExperiences[i]?.endDate || 'Present'}
-                              </p>
-                              <p className="text-light text-sm whitespace-pre-line">
-                                {workExperiences[i]?.jobDescription}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="lg:invisible transition-all duration-200 lg:group-hover:visible">
-                            <button
-                              type="button"
-                              className="hover:bg-gray-200 p-2 rounded-full"
-                              onClick={() => {
-                                setTempWorkExperience({ index: i, data: workExperiences[i] });
-                                modalWorkExperienceToggle();
-                              }}
-                            >
-                              <HiPencil />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </form>
+                    ))}
+                  </div>
                 </div>
               </div>
               <div className="hidden lg:block w-full">
@@ -435,6 +498,7 @@ export default function Home() {
                     jobTitle={jobTitle}
                     workExperiences={workExperiences}
                     links={links}
+                    skills={skills}
                   />
                 </BrowserFrame>
               </div>

@@ -1,33 +1,33 @@
 import React, { useEffect } from 'react';
+import App from 'next/app';
 import Head from 'next/head';
-import Cookies from 'universal-cookie';
 import jwtDecode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { Toaster } from 'react-hot-toast';
 
-import '../firebase/firebase';
-import useAuth from '../zustand/auth';
+import BackdropLoader from '../src/components/BackdropLoader';
+import '../src/firebase/firebase';
+import useAuth from '../src/zustand/auth';
+import useHasMounted from '../src/hooks/useHasMounted';
 
-import '../styles/globals.css';
+import '../src/styles/globals.css';
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, user }) {
   const { login } = useAuth();
 
+  const isMounted = useHasMounted();
+
   useEffect(() => {
-    const cookies = new Cookies();
-
-    let user;
-    const accessToken = cookies.get('token');
-
-    if (accessToken) {
-      try {
-        user = jwtDecode(accessToken);
-        login(user);
-      } catch (err) {
-        // console.log(err);
-      }
+    if (user) {
+      login(user);
     }
   }, []);
+
+  if (!isMounted) {
+    return (
+      <BackdropLoader open />
+    );
+  }
 
   return (
     <>
@@ -46,14 +46,35 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
+MyApp.getInitialProps = async (appContext) => {
+  App.getInitialProps(appContext);
+
+  let user;
+  const accessToken = appContext.ctx.req?.cookies?.token;
+
+  if (accessToken) {
+    try {
+      user = jwtDecode(accessToken);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  return {
+    user,
+  };
+};
+
 export default MyApp;
 
 MyApp.defaultProps = {
   Component: null,
   pageProps: {},
+  user: null,
 };
 
 MyApp.propTypes = {
-  Component: PropTypes.node,
+  Component: PropTypes.func,
   pageProps: PropTypes.object,
+  user: PropTypes.object,
 };
